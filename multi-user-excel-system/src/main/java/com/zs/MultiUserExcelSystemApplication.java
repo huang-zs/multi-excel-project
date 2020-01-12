@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 @MapperScan("com.zs.mapper")
-@PropertySource("file:F:\\Java_code\\application.properties")
+@PropertySource("file:F:\\Java_code\\application.properties")//邮箱账号密码的配置位置
 public class MultiUserExcelSystemApplication {
 
 	public static void main(String[] args) {
