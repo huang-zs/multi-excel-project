@@ -4,8 +4,8 @@
 
 	<insert id="create" parameterType="Excel">
 		INSERT INTO excel
-		(id,name,create_date,last_modify_date,json,creater_id,status)
-		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1')
+		(id,name,create_date,last_modify_date,json,creater_id,status,describe)
+		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1',#{excel.describe})
 	</insert>
 	<select id="get" resultType="Excel" parameterType="String">
 		select * from

@@ -14,14 +14,26 @@ public class Excel {
 	private String json;
 	private String createrId;
 	private char status;
-	public String getId() {
-		return id;
-	}
+	private String describe;
+	
+	
+	
 	@Override
 	public String toString() {
 		return "Excel [id=" + id + ", name=" + name + ", createDate=" + createDate + ", lastModifyDate="
-				+ lastModifyDate + ", createrId=" + createrId + ", status=" + status + "]";
+				+ lastModifyDate + ", json=" + json + ", createrId=" + createrId + ", status=" + status + ", describe="
+				+ describe + "]";
 	}
+	public String getDescribe() {
+		return describe;
+	}
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
+	public String getId() {
+		return id;
+	}
+	
 	public void setId(String id) {
 		this.id = id;
 	}

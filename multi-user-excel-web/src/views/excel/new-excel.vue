@@ -31,7 +31,6 @@ export default {
       spread: {},
       webSocket: null,
       excelId: ''
-
     }
   },
   // 用destroyed会报错
@@ -46,11 +45,22 @@ export default {
   methods: {
     spreadInitHandle: function (spread) {
       this.spread = spread
-      create({ 'json': JSON.stringify(this.spread.toJSON()) }).then(response => {
+      let form = (this.$router.currentRoute.params)
+      // 如果是import的话就取文件渲染
+      if (form.type === 'import') {
+        let _this = this
+        let ex = new ExcelIO.IO()
+        ex.open(form.excelFile, function (json) {
+          _this.spread.fromJSON(json)
+        }, function (e) {
+          console.log(e)
+        })
+      }
+      form.json = JSON.stringify(this.spread.toJSON())
+      create(form).then(response => {
         window.console.log(response)
         // 赋值后端返回的excelId 保存用
         this.excelId = response.data.data
-        window.console.log('存excelId' + this.excelId)
         this.webSocketInit()
       }).catch(error => {
         window.console.log(error)

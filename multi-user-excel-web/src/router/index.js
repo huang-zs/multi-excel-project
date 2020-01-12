@@ -23,6 +23,7 @@ const router = new Router({
       children: [
         {
           path: 'newExcel',
+          name: 'newExcel',
           component: () => import('@/views/excel/new-excel.vue')
         },
         {
@@ -30,12 +31,21 @@ const router = new Router({
           component: () => import('@/views/excel/open-excel.vue')
         },
         {
+          path: 'importExcel',
+          name: 'importExcel',
+          component: () => import('@/views/excel/import-excel.vue')
+        },
+        {
           path: 'openExcelList',
           component: () => import('@/views/excel/open-excel-list.vue')
         },
         {
-          path: 'importExcel',
-          component: () => import('@/views/excel/import-excel.vue')
+          path: 'importExcelInfo',
+          component: () => import('@/views/excel/import-excel-info.vue')
+        },
+        {
+          path: 'newExcelInfo',
+          component: () => import('@/views/excel/new-excel-info.vue')
         }
       ]
     },
