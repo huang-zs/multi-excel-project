@@ -1,0 +1,31 @@
+server:
+  port: 8081
+  
+spring:
+  datasource:
+    url: jdbc:mysql:///mutil-user-excel-database?charset=utf8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: admin
+  mail:
+    host: smtp.163.com
+#    username: 13725285033@163.com
+#    password: qwe123456
+    port: 25
+  redis:
+    host: 192.168.149.129
+    port: 6379
+    timeout: 20000
+    database: 0
+      
+mybatis:
+  mapper-locations: classpath:com/zs/mapper/*Mapper.xml
+  type-aliases-package: com.zs.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level: 
+    com.zs.mapper: DEBUG
+    com.zs.communication: debug
+    com.zs.controller: debug
