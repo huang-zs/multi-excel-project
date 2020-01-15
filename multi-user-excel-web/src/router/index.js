@@ -46,6 +46,10 @@ const router = new Router({
         {
           path: 'newExcelInfo',
           component: () => import('@/views/excel/new-excel-info.vue')
+        },
+        {
+          path: 'test',
+          component: () => import('@/views/test')
         }
       ]
     },

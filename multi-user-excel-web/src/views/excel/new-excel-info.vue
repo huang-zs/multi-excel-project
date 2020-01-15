@@ -4,7 +4,7 @@
           <el-input v-model="newExcelForm.name" placeholder="请输入文件名" />
         </el-form-item>
         <el-form-item label="文件描述">
-          <el-input type="textarea" v-model="newExcelForm.describe" placeholder="请输入文件描述" />
+          <el-input type="textarea" v-model="newExcelForm.fileDescribe" placeholder="请输入文件描述" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="toNewExcel">新建</el-button>
@@ -19,7 +19,7 @@ export default {
       newExcelForm: {
         type: 'new', // 代表是newExcel
         name: '',
-        describe: '',
+        fileDescribe: '',
         json: ''
       }
     }

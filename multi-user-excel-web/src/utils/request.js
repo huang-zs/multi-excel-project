@@ -1,7 +1,7 @@
 import axios from 'axios'
 import baseUrl from '../api/baseUrl'
 import store from '../store'
-import {Message} from 'element-ui'
+// import { Message } from 'element-ui'
 
 const service = axios.create({
   baseURL: baseUrl,
@@ -19,8 +19,8 @@ service.interceptors.request.use(
 )
 service.interceptors.response.use(
   response => {
-    if (response.data.status && response.data.status === 200 && response.data.data.status === 200) {
-      Message.success({message: response.data.data.msg})
+    if (response.data.status && response.data.status === 200 && response.data.data.code !== 200) {
+      console.log('接口' + response.config.url + ']调用失败')
     }
     return response
   }

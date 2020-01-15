@@ -1,6 +1,7 @@
 // https://eslint.org/docs/user-guide/configuring
 
 module.exports = {
+  // 表面该文件问根文件
   root: true,
   parserOptions: {
     parser: 'babel-eslint'
@@ -17,7 +18,7 @@ module.exports = {
   ],
   // required to lint *.vue files
   plugins: [
-    'vue'
+    'vue'//帮助检测.vue文件的<template>和<script>
   ],
   // add your custom rules here
   rules: {

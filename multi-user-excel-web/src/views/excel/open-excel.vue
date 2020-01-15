@@ -1,24 +1,29 @@
 <template>
-     <div>
+  <div>
     <el-container>
-      <el-header height="20px">
-      <el-button @click="saveExcel">保存</el-button>
-      <el-button @click="exportExcel">导出excel</el-button>
+      <el-header height="40px">
+        <el-button @click="saveExcel">保存</el-button>
+        <el-button @click="exportExcel">导出excel</el-button>
+        <el-button
+          v-clipboard:copy="excelId"
+          v-clipboard:success="onCopy"
+          v-clipboard:error="onError"
+          disabled=""
+        >邀请协助者</el-button>
       </el-header>
-<el-main>
-
-<div class="spreadContainer">
-      <gc-spread-sheets :hostClass='"spreadHost"'
-      @workbookInitialized='spreadInitHandle($event)'
-      @valueChanged="valueChanged"
-      @columnChanged="columnChanged"
-      @rowChanged="rowChanged"
-      >
-      </gc-spread-sheets>
-    </div>
-</el-main>
+      <el-main>
+        <div class="spreadContainer">
+          <gc-spread-sheets
+            :hostClass='"spreadHost"'
+            @workbookInitialized="spreadInitHandle($event)"
+            @valueChanged="valueChanged"
+            @columnChanged="columnChanged"
+            @rowChanged="rowChanged"
+          ></gc-spread-sheets>
+        </div>
+      </el-main>
     </el-container>
-</div>
+  </div>
 </template>
 <script>
 import ExcelIO from '@grapecity/spread-excelio'
@@ -30,15 +35,15 @@ export default {
     return {
       spread: {},
       webSocket: null,
-      excelId: this.$route.query.id
+      excelId: this.$route.query.id,
+      shareButtonFlag: true
     }
   },
   beforeDestroy () {
     window.console.log('打开excel关闭websocket')
-    this.webSocket.close()
-    window.console.log('打开excel保存')
     // 离开页面的时候自动保存Excel到后端
     this.saveExcel()
+    this.webSocket.close()
   },
   methods: {
     spreadInitHandle: function (spread) {
@@ -46,6 +51,9 @@ export default {
       // 拿excelId 到后端获取excel对象赋值
       get({ 'excelId': this.$route.query.id }).then(response => {
         this.spread.fromJSON(JSON.parse(response.data.data.json))
+        console.log(response.data.data)
+        let user = JSON.parse(this.$store.state.ExcelUser)
+        console.log(user.id)
         this.webSocketInit()
       }).catch(error => {
         window.console.log(error)
@@ -87,6 +95,7 @@ export default {
       this.webSocket.send(JSON.stringify(args))
     },
     webSocketInit () {
+      let _this = this
       console.log('websocket初始化' + this.excelId)
       this.webSocket = new WebSocket('ws://localhost:8081/ws/asset/' + this.excelId)
       // 连接打开事件
@@ -102,17 +111,22 @@ export default {
         alert('Socket发生了错误')
       }
       // 收到消息事件
-      this.webSocket.onmessage = this.webSocketOnMessage
+      this.webSocket.onmessage = function (msg) {
+        // 转成json对象
+        let jsonv = JSON.parse(msg.data)
+        _this.spread.getSheetFromName(jsonv.sheetName).getCell(jsonv.row, jsonv.col).text(jsonv.newValue)
+      }
       // 窗口关闭时，关闭连接
       window.unload = function () {
         this.webSocket.close()
       }
     },
-    // 放 this.webSocket.onmessage 里面会获取不到this.spread,不知道为什么
-    webSocketOnMessage (msg) {
-      // 转成json对象
-      let jsonv = JSON.parse(msg.data)
-      this.spread.getSheetFromName(jsonv.sheetName).getCell(jsonv.row, jsonv.col).text(jsonv.newValue)
+    onCopy (e) {
+      this.$message.success('内容已复制到剪切板！')
+    },
+    // 复制失败时的回调函数
+    onError (e) {
+      this.$message.error('抱歉，复制失败！')
     }
   }
 }
@@ -126,7 +140,7 @@ export default {
   height: 400px;
 }
 .spreadHost {
-   width: 100%;
+  width: 100%;
   height: 100%;
 }
 </style>

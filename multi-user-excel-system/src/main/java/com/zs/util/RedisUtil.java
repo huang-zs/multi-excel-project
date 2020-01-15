@@ -50,7 +50,7 @@ public void set(String key,Object value,long timeOut) {
  * @param key
  * @return
  */
-public boolean hasKey(String key) {
+public static boolean hasKey(String key) {
 	return template.hasKey(key);
 }
 /**

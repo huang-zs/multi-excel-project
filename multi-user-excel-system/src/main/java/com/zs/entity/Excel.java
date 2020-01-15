@@ -14,7 +14,7 @@ public class Excel {
 	private String json;
 	private String createrId;
 	private char status;
-	private String describe;
+	private String fileDescribe;
 	
 	
 	
@@ -22,13 +22,13 @@ public class Excel {
 	public String toString() {
 		return "Excel [id=" + id + ", name=" + name + ", createDate=" + createDate + ", lastModifyDate="
 				+ lastModifyDate + ", json=" + json + ", createrId=" + createrId + ", status=" + status + ", describe="
-				+ describe + "]";
+				+ fileDescribe + "]";
 	}
 	public String getDescribe() {
-		return describe;
+		return fileDescribe;
 	}
 	public void setDescribe(String describe) {
-		this.describe = describe;
+		this.fileDescribe = describe;
 	}
 	public String getId() {
 		return id;

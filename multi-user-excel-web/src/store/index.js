@@ -6,7 +6,8 @@ const store = new Vuex.Store({
   state: {
     // 存储token
     SecurtToken: localStorage.getItem('SecurtToken') ? localStorage.getItem('SecurtToken') : '',
-    ExcelUser: localStorage.getItem('ExcelUser') ? localStorage.getItem('ExcelUser') : {}
+    ExcelUser: localStorage.getItem('ExcelUser') ? localStorage.getItem('ExcelUser') : {},
+    Excel: {}
   },
   mutations: {
     saveToken (state, token) {
@@ -18,6 +19,12 @@ const store = new Vuex.Store({
       state.ExcelUser = JSON.stringify(data.user)
       localStorage.setItem('SecurtToken', data.token)
       localStorage.setItem('ExcelUser', JSON.stringify(data.user))
+    },
+    saveExcel (state, excel) {
+      state.excel = excel
+    },
+    updateExcel (state, json) {
+      state.excel.json = json
     }
   }
 

@@ -4,7 +4,7 @@
           <input id="excelFile" type="file" >
         </el-form-item>
         <el-form-item label="文件描述">
-          <el-input type="textarea" v-model="importExcelForm.describe" placeholder="请输入文件描述" />
+          <el-input type="textarea" v-model="importExcelForm.fileDescribe" placeholder="请输入文件描述" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="toNewExcel">导入</el-button>
@@ -19,7 +19,7 @@ export default {
       importExcelForm: {
         type: 'import', // 代表是importExcel
         name: '',
-        describe: '',
+        fileDescribe: '',
         excelFile: null,
         json: ''
       }
