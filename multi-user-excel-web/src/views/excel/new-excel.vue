@@ -2,23 +2,22 @@
   <div>
     <el-container>
       <el-header height="20px">
-<el-button @click="saveExcel">保存</el-button>
-      <el-button @click="exportExcel">导出excel</el-button>
+        <el-button @click="saveExcel">保存</el-button>
+        <el-button @click="exportExcel">导出excel</el-button>
       </el-header>
-<el-main>
-
-</el-main>
-<div class="spreadContainer">
-      <gc-spread-sheets :hostClass='"spreadHost"'
+      <div class="spreadContainer">
+        <div id='ss' style='width:100%; height:400px;'>
+        </div>
+      </div>
+      <!-- <gc-spread-sheets :hostClass='"spreadHost"'
       @workbookInitialized='spreadInitHandle($event)'
       @valueChanged="valueChanged"
       @columnChanged="columnChanged"
       @rowChanged="rowChanged"
       >
-      </gc-spread-sheets>
-    </div>
+      </gc-spread-sheets> -->
     </el-container>
-</div>
+  </div>
 </template>
 <script>
 import ExcelIO from '@grapecity/spread-excelio'
@@ -30,8 +29,41 @@ export default {
     return {
       spread: {},
       webSocket: null,
-      excelId: ''
+      excelId: '',
+      datasource: [
+       { name: 'Alice', age: 27, birthday: '1985/08/31', position: 'PM' }
+      ],
 
+      sheet: {}
+    }
+  },
+  mounted () {
+    let _this = this;
+    this.$nextTick(() => {
+      _this.spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'))
+      console.log(_this.spread)
+      _this.sheet = _this.spread.getSheet(0);
+      _this.sheet.setDataSource(_this.datasource);
+      _this.spread.bind(GC.Spread.Sheets.Events.ValueChanged, function (s, e) {
+
+          console.log(e);
+
+      });
+    })
+    
+  },
+  watch: {
+    sheet(newValue, oldVal){
+      console.log(newValue)
+    }
+  },
+  computed: {
+    dataTable () {
+      let dataTable = []
+      for (let i = 0; i < 42; i++) {
+        dataTable.push({price: i + 0.56})
+      }
+      return dataTable
     }
   },
   // 用destroyed会报错
@@ -44,6 +76,12 @@ export default {
   },
 
   methods: {
+    cellChanged (sender, args) {
+      console.log(1)
+      console.log(sender)
+      console.log(args)
+    },
+
     spreadInitHandle: function (spread) {
       this.spread = spread
       create({ 'json': JSON.stringify(this.spread.toJSON()) }).then(response => {
@@ -83,15 +121,20 @@ export default {
         })
       })
     },
+    // 增加删除行
     rowChanged (sender, args) {
-      //
+      console.log(sender)
+      console.log(args)
     },
+    // 增加删除列
     columnChanged (sender, args) {
-      //
+      console.log(sender)
+      console.log(args)
     },
+    // 单元格改变
     valueChanged (sender, args) {
       console.log(args)
-      this.webSocket.send(JSON.stringify(args))
+      // this.webSocket.send(JSON.stringify(args))
     },
     webSocketInit () {
       console.log('websocket初始化' + this.excelId)

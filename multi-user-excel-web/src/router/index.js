@@ -57,12 +57,13 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     // 为什么不去store拿？
-    let token = localStorage.getItem('SecurtToken')
-    if (token === null || token === '') {
-      next('/user/login')
-    } else {
-      next()
-    }
+    // let token = localStorage.getItem('SecurtToken')
+    // if (token === null || token === '') {
+    //   next('/user/login')
+    // } else {
+    //   next()
+    // }
+    next()
   }
 })
 export default router
