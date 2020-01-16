@@ -30,10 +30,6 @@ export default {
       spread: {},
       webSocket: null,
       excelId: '',
-      datasource: [
-       { name: 'Alice', age: 27, birthday: '1985/08/31', position: 'PM' }
-      ],
-
       sheet: {}
     }
   },
@@ -41,13 +37,30 @@ export default {
     let _this = this;
     this.$nextTick(() => {
       _this.spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'))
-      console.log(_this.spread)
+      console.log(JSON.parse(JSON.stringify(_this.spread)))
       _this.sheet = _this.spread.getSheet(0);
-      _this.sheet.setDataSource(_this.datasource);
       _this.spread.bind(GC.Spread.Sheets.Events.ValueChanged, function (s, e) {
-
           console.log(e);
-
+      });
+      _this.spread.bind(GC.Spread.Sheets.Events.RowChanged, function (s, e) {
+        //整行
+          console.log(e);
+      });
+      _this.spread.bind(GC.Spread.Sheets.Events.ColumnChanged, function (s, e) {
+        //整列
+          console.log(e);
+      });
+      _this.spread.bind(GC.Spread.Sheets.Events.ActiveSheetChanged, function (s, e) {
+        //切换sheet
+          console.log(e);
+      });
+       _this.spread.bind(GC.Spread.Sheets.Events.SelectionChanged, function (s, e) {
+         //切换单元格
+          console.log(e);
+      });
+      _this.spread.bind(GC.Spread.Sheets.Events.ClipboardPasted, function (sender, args) {
+        //粘贴时
+          console.log(args);
       });
     })
     
