@@ -153,7 +153,7 @@ export default {
     },
     webSocketInit () {
       console.log('websocket初始化' + this.excelId)
-      this.webSocket = new WebSocket('process.env.WEBSOCKET_URL' + this.excelId)
+      this.webSocket = new WebSocket(process.env.WEBSOCKET_URL + this.excelId)
       // 连接打开事件
       this.webSocket.onopen = function () {
         window.console.log('Socket 已打开')
