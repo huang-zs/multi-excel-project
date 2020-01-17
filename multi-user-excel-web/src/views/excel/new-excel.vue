@@ -34,7 +34,7 @@ export default {
     }
   },
   mounted () {
-    console.log('环境变量'+process.env.NODE_ENV)
+    this.webSocketInit()
     let _this = this;
     this.$nextTick(() => {
       _this.spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'))
@@ -153,7 +153,7 @@ export default {
     },
     webSocketInit () {
       console.log('websocket初始化' + this.excelId)
-      this.webSocket = new WebSocket('ws://localhost:8081/ws/asset/' + this.excelId)
+      this.webSocket = new WebSocket('process.env.WEBSOCKET_URL' + this.excelId)
       // 连接打开事件
       this.webSocket.onopen = function () {
         window.console.log('Socket 已打开')
