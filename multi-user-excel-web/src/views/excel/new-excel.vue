@@ -34,6 +34,7 @@ export default {
     }
   },
   mounted () {
+    console.log('环境变量'+process.env.NODE_ENV)
     let _this = this;
     this.$nextTick(() => {
       _this.spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'))
@@ -60,6 +61,7 @@ export default {
       });
       _this.spread.bind(GC.Spread.Sheets.Events.ClipboardPasted, function (sender, args) {
         //粘贴时
+        console.log(sender)
           console.log(args);
       });
     })
