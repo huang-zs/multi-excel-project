@@ -23,6 +23,7 @@ const router = new Router({
       children: [
         {
           path: 'newExcel',
+          name: 'newExcel',
           component: () => import('@/views/excel/new-excel.vue')
         },
         {
@@ -30,12 +31,25 @@ const router = new Router({
           component: () => import('@/views/excel/open-excel.vue')
         },
         {
+          path: 'importExcel',
+          name: 'importExcel',
+          component: () => import('@/views/excel/import-excel.vue')
+        },
+        {
           path: 'openExcelList',
           component: () => import('@/views/excel/open-excel-list.vue')
         },
         {
-          path: 'importExcel',
-          component: () => import('@/views/excel/import-excel.vue')
+          path: 'deletedExcelList',
+          component: () => import('@/views/excel/deleted-excel-list.vue')
+        },
+        {
+          path: 'importExcelInfo',
+          component: () => import('@/views/excel/import-excel-info.vue')
+        },
+        {
+          path: 'newExcelInfo',
+          component: () => import('@/views/excel/new-excel-info.vue')
         }
       ]
     },
@@ -46,6 +60,10 @@ const router = new Router({
     {
       path: '/error',
       component: () => import('@/views/common/error')
+    },
+    {
+      path: '/test',
+      component: () => import('@/views/test/test3')
     }
   ]
 })

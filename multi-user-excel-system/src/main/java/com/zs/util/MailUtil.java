@@ -1,5 +1,7 @@
 package com.zs.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -17,6 +19,8 @@ public class MailUtil {
 	private MailSender mailSender;
 	@Value("${spring.mail.username}")
 	private String from;
+	
+	private final Logger logger = LoggerFactory.getLogger(MailUtil.class);
 	/**
 	 * 发送简单文本邮件
 	 * @param to 收件人
@@ -33,8 +37,10 @@ public class MailUtil {
 		message.setTo(to);
 		try {
 			mailSender.send(message);
+			logger.info("发送邮件to:"+to);
 		} catch (MailException e) {
-			throw new Exception("邮件发送失败");
+			logger.error(e.getMessage());
+			throw new Exception(e);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.zs.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,8 +37,52 @@ public interface ExcelMapper {
 	/**
 	 * 根据createId获取excel列表
 	 * 
-	 * @param createrId
+	 * @param conditionMap 查询条件
 	 * @return excel列表
 	 */
-	List<Excel> getExcelListById(String createrId);
+	List<Excel> getExcelListByCreaterId(Map conditionMap);
+
+	/**
+	 * 根据createId获取加入协助的excel列表
+	 * 
+	 * @param id
+	 * @return excel列表
+	 */
+	List<Excel> getShareExcelListByUserId(Map conditionMap);
+
+	/**
+	 * 把excelId和userId存入关联表
+	 * @param excelId
+	 * @param userId
+	 */
+	void bindShareExcel(String excelId, String userId);
+
+	/**
+	 * 根据userid和excelid返回记录数
+	 * @param excelId
+	 * @param userId
+	 * @return
+	 */
+	int countByExcelIdAndUserId(String excelId, String userId);
+
+//	/**
+//	 * 根据excelId删除excel
+//	 * @param excelId
+//	 * @return
+//	 */
+//	void deleteExcelByExcelId(String excelId);
+	/**
+	 * 根据excelId修改excel状态
+	 * @param excelId
+	 * @param status
+	 */
+	void updateExcelStatusByExcelId(String excelId,String status);
+
+	/**
+	 * 根据userid或excelId删除关联表记录
+	 * @param map
+	 * @return
+	 */
+	void unbindShareExcel(Map map);
+
 }

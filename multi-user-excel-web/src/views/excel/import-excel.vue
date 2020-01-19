@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header height="20px">
-            <el-button @click="saveExcel">保存</el-button>
+            <!-- <el-button @click="saveExcel">保存</el-button> -->
       </el-header>
      <el-main>
          <input type="file" @change="importExcel($event)">
@@ -19,7 +19,7 @@
 import ExcelIO from '@grapecity/spread-excelio'
 import FaverSaver from 'file-saver'
 export default {
-  name: 'new-excel',
+  name: 'import-excel',
   data () {
     return {
       spread: {}
@@ -30,6 +30,7 @@ export default {
   methods: {
     spreadInitHandle: function (spread) {
       this.spread = spread
+      console.log(this.$router.currentRoute.params)
     },
     importExcel (e) {
       let ex = new ExcelIO.IO()
