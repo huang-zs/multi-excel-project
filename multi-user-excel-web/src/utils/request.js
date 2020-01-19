@@ -1,10 +1,9 @@
 import axios from 'axios'
-import baseUrl from '../api/baseUrl'
 import store from '../store'
 import {Message} from 'element-ui'
 
 const service = axios.create({
-  baseURL: baseUrl,
+  baseURL: process.env.BASE_URL,
   timeout: 15000
 })
 // 添加请求拦截器
