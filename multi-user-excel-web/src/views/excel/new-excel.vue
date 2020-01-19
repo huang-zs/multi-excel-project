@@ -46,14 +46,16 @@ export default {
     window.console.log('新建excel关闭websocket')
     this.webSocket.close()
   },
-
+  mounted () {
+    console.log(this.$store.state)
+  },
   methods: {
     spreadInitHandle: function (spread) {
+      let _this = this
       this.spread = spread
       let form = (this.$router.currentRoute.params)
       // 如果是import的话就取文件渲染
       if (form.type === 'import') {
-        let _this = this
         let ex = new ExcelIO.IO()
         ex.open(form.excelFile, function (json) {
           _this.spread.fromJSON(json)
@@ -63,9 +65,9 @@ export default {
       }
       form.json = JSON.stringify(this.spread.toJSON())
       create(form).then(response => {
-        window.console.log(response)
-        // 赋值后端返回的excelId 保存用
-        this.excelId = response.data.data.excelId
+        // 保存excel对象
+        this.$store.commit('saveExcel', response.data.data)
+        _this.excelId = this.$store.state.excel.id
         this.webSocketInit()
       }).catch(error => {
         window.console.log(error)
@@ -89,7 +91,8 @@ export default {
     // 保存excel 把id 的excel对象修改
     saveExcel () {
       window.console.log('保存excel')
-      save({ 'json': JSON.stringify(this.spread.toJSON()), 'id': this.excelId }).then(response => {
+      this.$store.commit('updateExcel', JSON.stringify(this.spread.toJSON()))
+      save(this.$store.state.excel).then(response => {
         window.console.log(response)
       }).catch(error => {
         window.console.log(error)
@@ -110,8 +113,9 @@ export default {
     },
     webSocketInit () {
       let _this = this
-      console.log('websocket初始化' + this.excelId)
-      this.webSocket = new WebSocket('ws://localhost:8081/ws/asset/' + this.excelId)
+      console.log('websocket初始化' + this.$store.state.excel.id)
+      this.webSocket = new WebSocket('ws://localhost:8081/multi-user-excel-system/ws/asset/' + this.$store.state.excel.id)
+      // this.webSocket = new WebSocket('ws://118.190.156.144:8081/multi-user-excel-system/ws/asset/' + this.$store.state.excel.id)
       // 连接打开事件
       this.webSocket.onopen = function () {
         window.console.log('Socket 已打开')

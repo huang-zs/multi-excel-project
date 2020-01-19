@@ -8,7 +8,6 @@
           v-clipboard:copy="excelId"
           v-clipboard:success="onCopy"
           v-clipboard:error="onError"
-          disabled=""
         >邀请协助者</el-button>
       </el-header>
       <el-main>
@@ -35,8 +34,7 @@ export default {
     return {
       spread: {},
       webSocket: null,
-      excelId: this.$route.query.id,
-      shareButtonFlag: true
+      excelId: ''
     }
   },
   beforeDestroy () {
@@ -47,13 +45,14 @@ export default {
   },
   methods: {
     spreadInitHandle: function (spread) {
+      let _this = this
       this.spread = spread
       // 拿excelId 到后端获取excel对象赋值
       get({ 'excelId': this.$route.query.id }).then(response => {
+        this.$store.commit('saveExcel', response.data.data)
+        _this.excelId = this.$store.state.excel.id
         this.spread.fromJSON(JSON.parse(response.data.data.json))
         console.log(response.data.data)
-        let user = JSON.parse(this.$store.state.ExcelUser)
-        console.log(user.id)
         this.webSocketInit()
       }).catch(error => {
         window.console.log(error)
@@ -64,9 +63,7 @@ export default {
     },
     exportExcel () {
       let ex = new ExcelIO.IO()
-      // console.log(this.spread)
       let json = this.spread.toJSON()
-      console.log(json)
       ex.save(json, function (blob) {
         FaverSaver.saveAs(blob, 'exportExcel.xlsx')
       }, function (e) {
@@ -75,7 +72,8 @@ export default {
     },
     // 保存excel 把id 的excel对象修改
     saveExcel () {
-      save({ 'json': JSON.stringify(this.spread.toJSON()), 'id': this.excelId }).then(response => {
+      this.$store.commit('updateExcel', JSON.stringify(this.spread.toJSON()))
+      save(this.$store.state.excel).then(response => {
         window.console.log(response)
       }).catch(error => {
         window.console.log(error)
@@ -96,8 +94,9 @@ export default {
     },
     webSocketInit () {
       let _this = this
-      console.log('websocket初始化' + this.excelId)
-      this.webSocket = new WebSocket('ws://localhost:8081/ws/asset/' + this.excelId)
+      console.log('websocket初始化' + this.$store.state.excel.id)
+      this.webSocket = new WebSocket('ws://localhost:8081/multi-user-excel-system/ws/asset/' + this.$store.state.excel.id)
+      // this.webSocket = new WebSocket('ws://118.190.156.144:8081/multi-user-excel-system/ws/asset/' + this.$store.state.excel.id)
       // 连接打开事件
       this.webSocket.onopen = function () {
         window.console.log('Socket 已打开')
@@ -112,6 +111,7 @@ export default {
       }
       // 收到消息事件
       this.webSocket.onmessage = function (msg) {
+        console.log('收到消息')
         // 转成json对象
         let jsonv = JSON.parse(msg.data)
         _this.spread.getSheetFromName(jsonv.sheetName).getCell(jsonv.row, jsonv.col).text(jsonv.newValue)

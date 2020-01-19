@@ -1,5 +1,7 @@
 package com.zs.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
@@ -18,11 +20,16 @@ public class MailServiceImpl implements MailService {
 	public String sendVerificationCode(String to) throws Exception {
 		// TODO Auto-generated method stub
 		// 这里要生成随机验证码
-		String code = "123";
+		String code = UUID.randomUUID().toString();
+		
 
 		String subject = "小黄人邮箱验证码";
-		String content = code;
-		mailUtil.sendSimpleMail(to, subject, content);
+		String content = code+"，此验证码15分钟有效";
+		try {
+			mailUtil.sendSimpleMail(to, subject, content);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
 		return code;
 	}
 

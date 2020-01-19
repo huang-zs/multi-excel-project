@@ -59,15 +59,21 @@ public interface ExcelService {
 	public boolean ifbindShareExcel(String excelId, String userId);
 
 	/**
-	 * 删除excel和所有协助绑定记录
+	 * 逻辑删除excel和物理删除所有协助绑定记录
 	 * @param excelId
 	 */
 	public void delete(String excelId);
+
 	/**
 	 * 解除绑定记录
 	 * @param excelId
 	 * @param userId
 	 */
 	public void unbind(String excelId, String userId);
+	/**
+	 * excel删除恢复正常
+	 * @param excelId
+	 */
+	public void recover(String excelId);
 
 }

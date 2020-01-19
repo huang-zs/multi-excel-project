@@ -27,7 +27,7 @@ import com.zs.util.RedisUtil;
 @RequestMapping("/excel")
 public class ExcelController extends BaseController {
 
-	private static final Logger log = LoggerFactory.getLogger(ExcelController.class);
+	private  final Logger logger = LoggerFactory.getLogger(ExcelController.class);
 
 	@Autowired
 	private ExcelService excelService;
@@ -57,7 +57,7 @@ public class ExcelController extends BaseController {
 	 */
 	@PostMapping("/create")
 	public CommonResult create(@RequestBody JSONObject json) {
-		log.debug("excel create");
+		logger.info("收到新建excel请求"+json);
 		LocalDateTime localDateTime = LocalDateTime.now();
 		String createDate = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.CHINA).format(localDateTime);
 		String lastModifyDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(localDateTime);
@@ -77,7 +77,7 @@ public class ExcelController extends BaseController {
 		Excel excel = json.toJavaObject(Excel.class);
 		int i = excelService.create(excel);
 		RedisUtil.set(encodeId, JSONObject.toJSONString(excel));
-
+		logger.info("新建excel请求通过,return:"+excel);
 		return CommonResult.ok(excel);
 	}
 
@@ -89,6 +89,7 @@ public class ExcelController extends BaseController {
 	 */
 	@PostMapping("/get")
 	public CommonResult get(@RequestBody JSONObject json) {
+		logger.info("收到获取excel请求"+json);
 		String excelId = json.getString("excelId");
 		Excel excel = null;
 		// redis没有就去数据库拿
@@ -98,6 +99,7 @@ public class ExcelController extends BaseController {
 		} else {
 			excel = excelService.get(excelId);
 		}
+		logger.info("获取excel请求结束,return:"+excel);
 		return CommonResult.ok(excel);
 	}
 
@@ -105,16 +107,26 @@ public class ExcelController extends BaseController {
 	 * 保存excel (redis，数据库)
 	 * 
 	 * @param json
+	 * {
+	 * id: "dXNlcjIwMjAwMTE0MjI1OTM2LWV4Y2VsLTIwMjAwMTE1MDk0OTA1"
+	 * name: "313"
+	 * createDate: "2020-01-15"
+	 * lastModifyDate: "2020-01-15 09:49:05"
+	 * json: "{"version":"13.0.3","customList":[],"sheets":{"Sheet1":{"name":"Sheet1","activeRow":3,"activeCol":5,"theme":"Office","data":{"dataTable":{"6":{"3":{"value":"kkk"}}},"defaultDataNode":{"style":{"themeFont":"Body"}}},"rowHeaderData":{"defaultDataNode":{"style":{"themeFont":"Body"}}},"colHeaderData":{"defaultDataNode":{"style":{"themeFont":"Body"}}},"leftCellIndex":0,"topCellIndex":0,"selections":{"0":{"row":3,"rowCount":1,"col":5,"colCount":1},"length":1},"cellStates":{},"outlineColumnOptions":{},"autoMergeRangeInfos":[],"index":0}}}"
+	 * createrId: "user20200114225936"
+	 * status: ""
+	 * describe: null
+	 * }
+	 * 
 	 * @return
 	 */
 	@PostMapping("/save")
 	public CommonResult save(@RequestBody JSONObject json) {
-		String excelId = json.getString("id");
-		String excelStr = (String) RedisUtil.get(excelId);
-		Excel excel = JSONObject.toJavaObject(JSONObject.parseObject(excelStr), Excel.class);
-		excel.setJson(json.getString("json"));
+		logger.info("收到获取excel请求"+json);
+		Excel excel = JSONObject.toJavaObject(json, Excel.class);
 		excelService.save(excel);
 		RedisUtil.set(excel.getId(), JSONObject.toJSONString(excel));
+		logger.info("获取excel请求通过");
 		return CommonResult.ok();
 	}
 
@@ -124,7 +136,7 @@ public class ExcelController extends BaseController {
 	 * @param json 查询条件
 	 * {
 	 * name: "" 
-	 * type: "all" // mine:自己的 ， other:协助的
+	 * type: "1" // 1:自己的 ， 2:协助的,  0:删除的
 	 * date: ["2020-01-10", "2020-02-03"] 
 	 * pageSize: 2
 	 * pageNum: 2 
@@ -134,15 +146,35 @@ public class ExcelController extends BaseController {
 	 */
 	@PostMapping("/list")
 	public CommonResult getExcelListByCreaterId(@RequestBody JSONObject json) {
+		logger.info("收到获取excel列表请求"+json);
 		json.put("id", getUser().getId());
 		PageInfo pageInfo = null;
-		if (json.getString("type").equals("mine")) {// 查询本人
+		String type = json.getString("type");
+//		if (type.equals("mine")) {// 查询本人
+//			pageInfo = excelService.getExcelListByCreaterId(json, json.getIntValue("pageNum"),
+//					json.getIntValue("pageSize"));
+//		} else if(type.eq) {// 查询协助的excel
+//			pageInfo = excelService.getShareExcelListByUserId(json, json.getIntValue("pageNum"),
+//					json.getIntValue("pageSize"));
+//		}
+		switch (type) {
+		case "1"://查自己的
 			pageInfo = excelService.getExcelListByCreaterId(json, json.getIntValue("pageNum"),
 					json.getIntValue("pageSize"));
-		} else {// 查询协助的excel
+			break;
+		case "2"://查协助的
 			pageInfo = excelService.getShareExcelListByUserId(json, json.getIntValue("pageNum"),
 					json.getIntValue("pageSize"));
+			break;
+		case "0"://查删除的
+			pageInfo = excelService.getExcelListByCreaterId(json, json.getIntValue("pageNum"),
+					json.getIntValue("pageSize"));
+			break;
+
+		default:
+			break;
 		}
+		logger.info("获取excel列表请求通过,return:"+pageInfo);
 		return CommonResult.ok(pageInfo);
 	}
 
@@ -154,22 +186,29 @@ public class ExcelController extends BaseController {
 	 */
 	@PostMapping("/assist")
 	public CommonResult checkAndBindExcel(@RequestBody JSONObject json) {
+		logger.info("收到检查和绑定协助excel请求"+json);
 		String excelId = json.getString("excelId");
 		Excel excel = excelService.get(excelId);
 		// 校验用户上送的邀请码对应的excel是否存在
 		if (excel == null) {
+			logger.info("检查和绑定协助excel请求失败,邀请码无效");
 			return CommonResult.failed("邀请码无效");
 		}
 		String userId = getUser().getId();
 		// 未绑定的绑定
 		if (!excelService.ifbindShareExcel(excelId, userId))
 			excelService.bindShareExcel(excelId, userId);
-
+		logger.info("检查和绑定协助excel请求通过");
 		return CommonResult.ok();
 	}
-
+	/**
+	 * 删除excel
+	 * @param json
+	 * @return
+	 */
 	@PostMapping("/delete")
 	public CommonResult delete(@RequestBody JSONObject json) {
+		logger.info("收到删除excel请求"+json);
 		String userId = getUser().getId();
 		String excelId = json.getString("excelId");
 		Excel excel = excelService.get(excelId);
@@ -181,7 +220,19 @@ public class ExcelController extends BaseController {
 			// 解绑excel
 			excelService.unbind(excelId, userId);
 		}
-
+		logger.info("收到删除excel请求通过");
+		return CommonResult.ok();
+	}
+	/**
+	 * excel还原
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/recover")
+	public CommonResult recover(@RequestBody JSONObject json) {
+		logger.info("收到还原excel请求"+json);
+		excelService.recover(json.getString("excelId"));
+		logger.info("还原excel请求通过");
 		return CommonResult.ok();
 	}
 

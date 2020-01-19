@@ -9,7 +9,7 @@
 	</insert>
 	<select id="get" resultType="Excel" parameterType="String">
 		select * from
-		excel where id = #{excelId}
+		excel where id = #{excelId} 
 	</select>
 	<update id="save" parameterType="Excel">
 		update excel set json =
@@ -17,7 +17,7 @@
 	</update>
 	<select id="getExcelListByCreaterId" parameterType="String"
 		resultType="Excel">
-		select distinct * from excel where creater_id = #{id}
+		select distinct * from excel where creater_id = #{id} and status=#{type}
 		<if test="name !=null and name !='' ">
 			and name like "%"#{name}"%"
 		</if>
@@ -48,9 +48,12 @@
 		insert into user_excel
 		values(#{userId},#{excelId})
 	</insert>
-	<delete id="deleteExcelByExcelId" parameterType="String">
+	<!-- <delete id="deleteExcelByExcelId" parameterType="String">
 		delete from excel where id = #{excelId}
-	</delete>
+	</delete> -->
+	<update id="updateExcelStatusByExcelId">
+		update excel set status =#{status} where id = #{excelId}
+	</update>
 	<delete id="unbindShareExcel" parameterType="String">
 		delete from user_excel where excel_id = #{excelId}
 		<if test="userId !=null and userId !=''">

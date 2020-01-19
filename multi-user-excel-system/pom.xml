@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.2.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.zs</groupId>
 	<artifactId>multi-user-excel-system</artifactId>
@@ -17,7 +18,28 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<skipTests>true</skipTests>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<profile.active>dev</profile.active>
+				<activatedProperties>dev</activatedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<profile.active>prod</profile.active>
+				<activatedProperties>prod</activatedProperties>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -27,6 +49,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,10 +64,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-	<!-- 	<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-quartz</artifactId>
-		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -90,9 +114,22 @@
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.13</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<!--配置文件路径 -->
+				<directory>src/main/resources</directory> <!--这里对应项目存放配置文件的目录 -->
+				<!--开启filtering功能 -->
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<finalName>multi-user-excel-system</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

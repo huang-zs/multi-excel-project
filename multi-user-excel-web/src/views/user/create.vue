@@ -8,8 +8,8 @@
         <img src="../../assets/create.png" width="300px" />
       </div>
       <el-form :model="createForm" ref="createForm" @submit.native.prevent>
-        <el-form-item label="登录用户名" prop="username">
-          <el-input v-model="createForm.username" placeholder="请输入登录用户名" />
+        <el-form-item label="登录用户名" prop="name">
+          <el-input v-model="createForm.name" placeholder="请输入登录用户名" />
         </el-form-item>
         <el-row>
           <el-col :span="24">
@@ -26,14 +26,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8" :offset="1">
-            <el-button icon="el-icon-message" @click="getCode">获取验证码</el-button>
+            <el-button icon="el-icon-message" @click="getCode" preventReClick>获取验证码</el-button>
           </el-col>
         </el-row>
         <el-form-item label="登录密码" prop="password">
           <el-input v-model="createForm.password" placeholder="请输入登录密码" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onCreate">注册</el-button>
+          <el-button type="primary" @click="onCreate" preventReClick>注册</el-button>
           <el-button @click="reset">重置</el-button>
         </el-form-item>
       </el-form>

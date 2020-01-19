@@ -65,12 +65,18 @@ public interface ExcelMapper {
 	 */
 	int countByExcelIdAndUserId(String excelId, String userId);
 
+//	/**
+//	 * 根据excelId删除excel
+//	 * @param excelId
+//	 * @return
+//	 */
+//	void deleteExcelByExcelId(String excelId);
 	/**
-	 * 根据excelId删除excel
+	 * 根据excelId修改excel状态
 	 * @param excelId
-	 * @return
+	 * @param status
 	 */
-	void deleteExcelByExcelId(String excelId);
+	void updateExcelStatusByExcelId(String excelId,String status);
 
 	/**
 	 * 根据userid或excelId删除关联表记录

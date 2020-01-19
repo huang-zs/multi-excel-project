@@ -40,16 +40,16 @@ const router = new Router({
           component: () => import('@/views/excel/open-excel-list.vue')
         },
         {
+          path: 'deletedExcelList',
+          component: () => import('@/views/excel/deleted-excel-list.vue')
+        },
+        {
           path: 'importExcelInfo',
           component: () => import('@/views/excel/import-excel-info.vue')
         },
         {
           path: 'newExcelInfo',
           component: () => import('@/views/excel/new-excel-info.vue')
-        },
-        {
-          path: 'test',
-          component: () => import('@/views/test')
         }
       ]
     },
@@ -60,6 +60,10 @@ const router = new Router({
     {
       path: '/error',
       component: () => import('@/views/common/error')
+    },
+    {
+      path: '/test',
+      component: () => import('@/views/test/test3')
     }
   ]
 })

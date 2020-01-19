@@ -68,11 +68,12 @@ public class ExcelServiceImpl implements ExcelService {
 	@Override
 	public void delete(String excelId) {
 		
-		excelMapper.deleteExcelByExcelId(excelId);
+		excelMapper.updateExcelStatusByExcelId(excelId,"0");
 		HashMap<String,String> map = new HashMap<String, String>();
 		map.put("excelId", excelId);
 		excelMapper.unbindShareExcel(map);
 	}
+	
 
 	@Override
 	public void unbind(String excelId, String userId) {
@@ -80,6 +81,12 @@ public class ExcelServiceImpl implements ExcelService {
 		map.put("excelId", excelId);
 		map.put("userId", userId);
 		excelMapper.unbindShareExcel(map);
+		
+	}
+
+	@Override
+	public void recover(String excelId) {
+		excelMapper.updateExcelStatusByExcelId(excelId, "1");
 		
 	}
 

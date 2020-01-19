@@ -65,3 +65,14 @@ export function checkAndBindExcel (data) {
 
   })
 }
+/**
+ * 删除的excel还原
+ */
+export function recover (data) {
+  return request({
+    url: '/excel/recover',
+    method: 'post',
+    data: data
+
+  })
+}
