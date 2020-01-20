@@ -48,7 +48,7 @@
       <el-table-column prop="fileDescribe" label="文件描述" width="180"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <router-link :to="{path:'/home/openExcel',query:{id:scope.row.id}}">
+          <router-link :to="{name:'newExcel',params:{id:scope.row.id,type:'open'}}">
             <el-button size="mini">打开</el-button>
           </router-link>
           <el-button size="mini" type="danger" @click="deleteExcel(scope.row.id)">删除</el-button>
@@ -70,7 +70,7 @@
 <script>
 import { list, checkAndBindExcel, remove } from '@/api/excel'
 export default {
-  data () {
+  data() {
     return {
       excelList: [],
       copyUrl: 'copyUrl',
@@ -84,12 +84,12 @@ export default {
       total: 0
     }
   },
-  mounted () {
+  mounted() {
     this.searchExcelList()
   },
   methods: {
     // 删除excel
-    deleteExcel (excelId) {
+    deleteExcel(excelId) {
       remove({ 'excelId': excelId }).then(response => {
         alert(response.data.msg)
         this.searchExcelList(1)
@@ -97,20 +97,20 @@ export default {
       console.log(excelId)
     },
     // 页显示个数变化
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(this.openExcelListForm)
       this.openExcelListForm.pageSize = val
       // 改变页显示个数时默认搜索第一页
       this.searchExcelList(1)
     },
     // 当前页变化
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(this.openExcelListForm)
       this.openExcelListForm.pageNum = val
       this.searchExcelList()
     },
 
-    searchExcelList (e) {
+    searchExcelList(e) {
       if (e) {
         this.openExcelListForm.pageNum = 1
       }
@@ -126,7 +126,7 @@ export default {
         })
     },
     // 使用验证码打开
-    openExcelByCode () {
+    openExcelByCode() {
       this.$prompt('请输入邀请码', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
@@ -136,8 +136,10 @@ export default {
             if (response.data.code === 200) {
               window.console.log('打开' + value)
               this.$router.push({
-                path: '/home/openExcel',
-                query: { 'id': value }
+                name: 'newExcel',
+                params: {
+                  id: value,
+                  type: 'open'                }
               })
             } else {
               alert(response.data.msg)

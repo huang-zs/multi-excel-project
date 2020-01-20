@@ -55,7 +55,7 @@ public class WebSocketServer {
 		while (iterator.hasNext()) {
 			String excelId = iterator.next();
 			CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(excelId);
-			logger.debug(excelId+"群成员:"+copyOnWriteArraySet);
+			logger.debug("{"+excelId+"}群成员:"+copyOnWriteArraySet);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class WebSocketServer {
 			while (iterator.hasNext()) {
 				String excelId = iterator.next();
 				CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(excelId);
-				logger.debug(excelId+"群成员:"+copyOnWriteArraySet);
+				logger.debug("{"+excelId+"}群成员:"+copyOnWriteArraySet);
 			}
 		}
 	}
