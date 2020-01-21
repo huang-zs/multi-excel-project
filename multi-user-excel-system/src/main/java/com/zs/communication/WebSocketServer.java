@@ -48,12 +48,14 @@ public class WebSocketServer {
 			copyOnWriteArraySet.add(session);
 			groupMap.put(id, copyOnWriteArraySet);
 		}
-		Set<String> set = groupMap.keySet();
-		Iterator<String> iterator = set.iterator();
+		//打印连接的群组
+		Set<String> connectingSet = groupMap.keySet();
+		Iterator<String> iterator = connectingSet.iterator();
+		logger.debug("用户["+session+"]加入群组["+id+"]");
 		while (iterator.hasNext()) {
-			String string = iterator.next();
-			CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(string);
-			logger.debug(copyOnWriteArraySet);
+			String excelId = iterator.next();
+			CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(excelId);
+			logger.debug("{"+excelId+"}群成员:"+copyOnWriteArraySet);
 		}
 	}
 
@@ -62,15 +64,25 @@ public class WebSocketServer {
 	 */
 	@OnClose
 	public void onClose(@PathParam(value = "id") String id, Session session) {
+		logger.debug("用户["+session+"]退出群组["+id+"]");
 		// 获取id这个群
 		CopyOnWriteArraySet<Session> set = groupMap.get(id);
 		// 移走 这个断开的群友
 		set.remove(session);
 		// 这个群没人了 移除这个群
 		if (set.size() < 1) {
+			logger.debug("群内最后一人断开连接,删除群");
 			groupMap.remove(id);
 		} else {
 			groupMap.put(id, set);
+			//打印连接的群组
+			Set<String> connectingSet = groupMap.keySet();
+			Iterator<String> iterator = connectingSet.iterator();
+			while (iterator.hasNext()) {
+				String excelId = iterator.next();
+				CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(excelId);
+				logger.debug("{"+excelId+"}群成员:"+copyOnWriteArraySet);
+			}
 		}
 	}
 
@@ -93,6 +105,7 @@ public class WebSocketServer {
 	 */
 	@OnError
 	public void onError(Session session, Throwable error) {
+		logger.error(error);
 		error.printStackTrace();
 	}
 
@@ -121,10 +134,15 @@ public class WebSocketServer {
 		// 获取要广播的群
 		CopyOnWriteArraySet<Session> set = groupMap.get(id);
 		// 不发给自己
-		set.remove(senderSession);
+//		set.remove(senderSession);
 		for (Session receiverSession : set) {
+			if(senderSession==receiverSession)//不发给自己
+				continue;
 			if (receiverSession.isOpen()) {
+				logger.debug("发送给:"+receiverSession);
 				SendMessage(receiverSession, message);
+			}else {
+				logger.debug(receiverSession+"不是打开状态");
 			}
 		}
 	}

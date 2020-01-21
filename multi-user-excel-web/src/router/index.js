@@ -23,6 +23,7 @@ const router = new Router({
       children: [
         {
           path: 'newExcel',
+          name: 'newExcel',
           component: () => import('@/views/excel/new-excel.vue')
         },
         {
@@ -34,8 +35,16 @@ const router = new Router({
           component: () => import('@/views/excel/open-excel-list.vue')
         },
         {
-          path: 'importExcel',
-          component: () => import('@/views/excel/import-excel.vue')
+          path: 'deletedExcelList',
+          component: () => import('@/views/excel/deleted-excel-list.vue')
+        },
+        {
+          path: 'importExcelInfo',
+          component: () => import('@/views/excel/import-excel-info.vue')
+        },
+        {
+          path: 'newExcelInfo',
+          component: () => import('@/views/excel/new-excel-info.vue')
         }
       ]
     },
@@ -46,13 +55,17 @@ const router = new Router({
     {
       path: '/error',
       component: () => import('@/views/common/error')
+    },
+    {
+      path: '/test',
+      component: () => import('@/views/test/test2')
     }
   ]
 })
 // localstore里面没token就跳登录页面
 router.beforeEach((to, from, next) => {
   window.console.log(to.path)
-  if ((to.path.startsWith('/user/')) || (to.path === '/')) {
+  if (to.path.startsWith('/user/') || to.path === '/') {
     window.console.log('请求路径' + to.path)
     next()
   } else {

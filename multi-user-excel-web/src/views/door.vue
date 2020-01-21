@@ -2,9 +2,6 @@
   <el-row>
     <el-col :span="20">
       <el-carousel :interval="4000" type="card" height="400px">
-        <el-carousel-item>
-          <img src="static/images/blue.png" style="width:100%" />
-        </el-carousel-item>
         <el-carousel-item v-for="item in doorImageArr" :key="item">
           <h1>{{item}}</h1>
           <img :src="item" style="width:100%" />
@@ -25,7 +22,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       doorImageArr: [
         'static/images/blue.png',
@@ -36,12 +33,12 @@ export default {
     }
   },
   methods: {
-    toLogin () {
+    toLogin() {
       this.$router.push('/user/login')
     },
     // 游客模式去往首页
-    toHome () {
-      this.$router.push({path: '/home'})
+    toHome() {
+      this.$router.push({ path: '/home' })
     }
   }
 }

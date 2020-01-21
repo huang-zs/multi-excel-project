@@ -4,8 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import './plugins/element.js'
-
+import './plugins/element.js'// 引用element
+import './plugins/clipboard'// 引用粘贴板
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

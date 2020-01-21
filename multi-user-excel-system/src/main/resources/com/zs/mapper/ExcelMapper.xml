@@ -4,19 +4,60 @@
 
 	<insert id="create" parameterType="Excel">
 		INSERT INTO excel
-		(id,name,create_date,last_modify_date,json,creater_id,status)
-		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1')
+		(id,name,create_date,last_modify_date,json,creater_id,status,file_describe)
+		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1',#{excel.fileDescribe})
 	</insert>
 	<select id="get" resultType="Excel" parameterType="String">
 		select * from
-		excel where id = #{excel.id}
+		excel where id = #{excelId} 
 	</select>
 	<update id="save" parameterType="Excel">
 		update excel set json =
 		#{excel.json} where id = #{excel.id}
 	</update>
-	<select id="getExcelListById" parameterType="String"
+	<select id="getExcelListByCreaterId" parameterType="String"
 		resultType="Excel">
-		select * from excel where creater_id = #{createrId}
+		select distinct * from excel where creater_id = #{id} and status=#{type}
+		<if test="name !=null and name !='' ">
+			and name like "%"#{name}"%"
+		</if>
+		<if test="date !=null and date.size>0 ">
+			and create_date between #{date[0]} and #{date[1]}
+		</if>
+		order by last_modify_date desc
 	</select>
+	<select id="getShareExcelListByUserId" parameterType="String"
+		resultType="Excel">
+		select distinct * from user_excel a LEFT JOIN excel b on
+		a.excel_id=b.id
+		where a.user_id=#{id}
+		<if test="name !=null and name !='' ">
+			and b.name like "%"#{name}"%"
+		</if>
+		<if test="date !=null and date.size>0 ">
+			and b.create_date between #{date[0]} and #{date[1]}
+		</if>
+		order by b.last_modify_date desc
+	</select>
+	<select id="countByExcelIdAndUserId" parameterType="String"
+		resultType="int">
+		select count(1) from user_excel where user_id=#{userId} and
+		excel_id=#{excelId}
+	</select>
+	<insert id="bindShareExcel" parameterType="String">
+		insert into user_excel
+		values(#{userId},#{excelId})
+	</insert>
+	<!-- <delete id="deleteExcelByExcelId" parameterType="String">
+		delete from excel where id = #{excelId}
+	</delete> -->
+	<update id="updateExcelStatusByExcelId">
+		update excel set status =#{status} where id = #{excelId}
+	</update>
+	<delete id="unbindShareExcel" parameterType="String">
+		delete from user_excel where excel_id = #{excelId}
+		<if test="userId !=null and userId !=''">
+			and user_id = #{userId}
+		</if>
+	</delete>
 </mapper>
