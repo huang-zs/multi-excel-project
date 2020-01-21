@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       spread: {},
+      sheetsName: [],
       webSocket: null,
       excelId: '',
       rowChangedFlag: true, //收到websocket时置false
@@ -48,6 +49,9 @@ export default {
       _this.spread = new GC.Spread.Sheets.Workbook(
         document.getElementById('ss')
       )
+      console.log('初始化excel')
+      console.log(JSON.parse(JSON.stringify(_this.spread)))
+      _this.sheetsName = Object.keys(JSON.parse(JSON.stringify(_this.spread)).sheets)
       //如果是类型是打开文件的话就调后端获取excel的json渲染
       if (form.type === 'open') {
         console.log('打开excel')
@@ -106,14 +110,14 @@ export default {
       console.log(JSON.parse(JSON.stringify(_this.spread)))
       //只值
       _this.spread.bind(GC.Spread.Sheets.Events.ValueChanged, function (s, e) {
-        console.log('ValueChanged')
+        console.log('发送ValueChanged')
         console.log(s)
         console.log(e)
         _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
       })
       // 整行
       _this.spread.bind(GC.Spread.Sheets.Events.RowChanged, function (s, e) {
-        console.log('RowChanged')
+        console.log('发送RowChanged')
         console.log(s)
         console.log(e)
         if (_this.rowChangedFlag) {
@@ -124,7 +128,7 @@ export default {
       })
       // 整列
       _this.spread.bind(GC.Spread.Sheets.Events.ColumnChanged, function (s, e) {
-        console.log('ColumnChanged')
+        console.log('发送ColumnChanged')
         console.log(s)
         console.log(e)
         if (_this.ColumnChangedFlag) {
@@ -134,14 +138,47 @@ export default {
         }
       })
       // 切换sheet
-      // _this.spread.bind(GC.Spread.Sheets.Events.ActiveSheetChanged, function (
-      //   s,
-      //   e
-      // ) {
-      //   console.log('ActiveSheetChanged')
-      //   console.log(s)
-      //   console.log(e)
-      // })
+      _this.spread.bind(GC.Spread.Sheets.Events.ActiveSheetChanged, function (
+        s,
+        e
+      ) {
+
+        // spread.getSheetIndex(name);
+        console.log('发送ActiveSheetChanged')
+        let spread = JSON.parse(JSON.stringify(_this.spread))
+        //旧的sheet名数组
+        let newSheetsName = Object.keys(spread.sheets)
+        //新的sheet名数组
+        let oldSheetsName = _this.sheetsName
+        console.log(newSheetsName)
+        console.log(oldSheetsName)
+
+        if (oldSheetsName.length === newSheetsName.length) {//换sheet
+          console.log('换sheet')
+        } else {//新增sheet
+          if (oldSheetsName.length < newSheetsName.length) {
+            _this.$set(e, 'type', 'add')
+            let result = newSheetsName.filter(function (v) {
+              return oldSheetsName.indexOf(v) === -1
+            })
+            console.log('增加' + result)
+            _this.$set(e, 'sheetName', result[0])
+            console.log(e)
+          } else {//删除sheet
+            _this.$set(e, 'type', 'delete')
+            let result = oldSheetsName.filter(function (v) {
+              return newSheetsName.indexOf(v) === -1
+            })
+            console.log('减少' + result)
+            _this.$set(e, 'sheetName', result[0])
+            console.log(e)
+          }
+          _this.sheetsName = newSheetsName
+          _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
+        }
+
+
+      })
       // // 切换单元格
       // _this.spread.bind(GC.Spread.Sheets.Events.SelectionChanged, function (
       //   s,
@@ -156,9 +193,29 @@ export default {
         s,
         e
       ) {
-        console.log('ClipboardPasted')
+        console.log('发送ClipboardPasted')
         console.log(s)
         console.log(e)
+        //获取要操作的sheet
+        let sheet = _this.spread
+          .getSheetFromName(e.sheetName)
+        let rowIndex = e.cellRange.row
+        let rowCount = e.cellRange.rowCount
+        let colIndex = e.cellRange.col
+        let colCount = e.cellRange.colCount
+        let dataArray = []
+        //把复制的值放到一个二元数组里面
+        for (let row = rowIndex, i = 0; row < rowIndex + rowCount; row++ , i++) {
+          dataArray[i] = []
+          for (let col = colIndex, j = 0; col < colIndex + colCount; col++ , j++) {
+            console.log(sheet
+              .getCell(row, col).text())
+            dataArray[i][j] = sheet
+              .getCell(row, col).text()
+          }
+        }
+        //把值数组赋给e
+        _this.$set(e, 'dataArray', dataArray)
         _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
       })
 
@@ -272,9 +329,20 @@ export default {
             break
 
           case 'ClipboardPasted'://粘贴
-            console.log('ClipboardPasted')
+            console.log('收到ClipboardPasted')
+            console.log(data)
+            _this.spread
+              .getSheetFromName(data.sheetName).setArray(data.cellRange.row, data.cellRange.col, data.dataArray)
+            break
+          case 'ActiveSheetChanged'://sheet变化
+            console.log('收到ActiveSheetChanged')
             console.log(jsonv)
-
+            if (data.type === 'add') {//新增sheet
+              _this.spread.addSheet(_this.spread.getSheetCount())
+            } else {//删除sheet
+              //先根据sheetname获取index，再删除第index的sheet
+              _this.spread.removeSheet(_spread.getSheetIndex(data.sheetName))
+            }
             break
           default:
             console.log('others')

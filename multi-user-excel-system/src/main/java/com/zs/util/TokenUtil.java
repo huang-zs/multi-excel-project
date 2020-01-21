@@ -27,11 +27,13 @@ public class TokenUtil {
 	 * 
 	 * @return
 	 */
-	public static String createToken(User user) {
+	public static String createToken(User user,String ip) {
 		String format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.CHINA).format(LocalDateTime.now());
 		UUID uuid = UUID.nameUUIDFromBytes((user.toString() + format).getBytes());
 		String uuidStr=uuid.toString();
-		RedisUtil.set(uuidStr, JSONObject.toJSONString(user));
+		JSONObject jsonUser=JSONObject.parseObject(JSONObject.toJSON(user).toString());
+		jsonUser.put("ip",ip);
+		RedisUtil.set(uuidStr, jsonUser.toString());
 		logger.info("创建token["+uuidStr+","+user+"]");
 		return uuidStr;
 	}
@@ -46,6 +48,17 @@ public class TokenUtil {
 		logger.info("获取token["+token+","+user+"]");
 		return user;
 	}
+	/**
+	 * 获取token所对应的user JsonObject 含ip
+	 * @param token
+	 * @return
+	 */
+	public static JSONObject getJsonObjectByToken(String token) {
+		JSONObject jsonUser = JSONObject.parseObject((String) RedisUtil.get(token));
+		logger.info("获取token["+token+","+jsonUser+"]");
+		return jsonUser;
+	}
+	
 	
 	public static void destroyToken(String token) {
 		logger.info("删除token["+token+"]");

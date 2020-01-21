@@ -8,6 +8,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
+
 /**
  * 邮件工具类
  * @author MagicBook
@@ -19,8 +20,9 @@ public class MailUtil {
 	private MailSender mailSender;
 	@Value("${spring.mail.username}")
 	private String from;
-	
+
 	private final Logger logger = LoggerFactory.getLogger(MailUtil.class);
+
 	/**
 	 * 发送简单文本邮件
 	 * @param to 收件人
@@ -28,13 +30,15 @@ public class MailUtil {
 	 * @param content 内容
 	 * @throws Exception 
 	 */
-	public void sendSimpleMail(String to, String subject, String content) throws Exception {
+	public void sendSimpleMail(String to, String subject, String content) throws Exception{
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom(from);
 		message.setText(content);
 		message.setSubject(subject);
 		message.setTo(to);
+		
+
 		try {
 			mailSender.send(message);
 			logger.info("发送邮件to:"+to);

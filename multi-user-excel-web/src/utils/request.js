@@ -22,6 +22,8 @@ service.interceptors.response.use(
       console.log('接口' + response.config.url + ']调用失败')
     }
     return response
+  },(error) =>{ 
+    console.log(error.response)
   }
 )
 
