@@ -109,6 +109,7 @@ export default {
         console.log('ValueChanged')
         console.log(s)
         console.log(e)
+        console.log(JSON.parse(JSON.stringify(e)))
         _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
       })
       // 整行
@@ -134,14 +135,24 @@ export default {
         }
       })
       // 切换sheet
-      // _this.spread.bind(GC.Spread.Sheets.Events.ActiveSheetChanged, function (
-      //   s,
-      //   e
-      // ) {
-      //   console.log('ActiveSheetChanged')
-      //   console.log(s)
-      //   console.log(e)
-      // })
+      _this.spread.bind(GC.Spread.Sheets.Events.ActiveSheetChanged, function (
+        s,
+        e
+      ) {
+        console.log('ActiveSheetChanged')
+        console.log(JSON.parse(JSON.stringify(_this.spread)))
+        console.log(s)
+        console.log(JSON.parse(JSON.stringify(e)))
+      })
+      //修改sheet名称
+      _this.spread.bind(GC.Spread.Sheets.Events.SheetNameChanged, function (
+        s,
+        e
+      ) {
+        console.log('SheetNameChanged')
+        console.log(s)
+        console.log(e)
+      })
       // // 切换单元格
       // _this.spread.bind(GC.Spread.Sheets.Events.SelectionChanged, function (
       //   s,
@@ -224,6 +235,7 @@ export default {
       // 连接关闭事件
       this.webSocket.onclose = function () {
         window.console.log('Socket已关闭')
+        _this.webSocketInit();
       }
       // 发生了错误事件
       this.webSocket.onerror = function () {

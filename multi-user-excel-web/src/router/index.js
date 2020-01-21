@@ -56,10 +56,10 @@ const router = new Router({
       path: '/error',
       component: () => import('@/views/common/error')
     },
-    {
-      path: '/test',
-      component: () => import('@/views/test/test2')
-    }
+    // {
+    //   path: '/test',
+    //   component: () => import('@/views/test/test2')
+    // }
   ]
 })
 // localstore里面没token就跳登录页面
