@@ -29,7 +29,7 @@ export default {
     return {
       spread: {},
       webSocket: null,
-      excelId: '',
+      excelId: '0',
       sheet: {}
     }
   },
