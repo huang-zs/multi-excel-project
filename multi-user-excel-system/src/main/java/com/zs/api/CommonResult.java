@@ -31,6 +31,12 @@ public class CommonResult<T> {
 	public static <T> CommonResult<T> failed(){
 		return new CommonResult<T>(ResultCode.FAILED.getCode(),ResultCode.FAILED.getMessage(),null);
 	}
+	public static <T> CommonResult<T> wrong(String msg){
+		return new CommonResult<T>(ResultCode.WRONG.getCode(),msg,null);
+	}
+	public static <T> CommonResult<T> wrong(){
+		return new CommonResult<T>(ResultCode.WRONG.getCode(),ResultCode.WRONG.getMessage(),null);
+	}
 	
 	
 	public long getCode() {

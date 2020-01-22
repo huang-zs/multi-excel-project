@@ -52,7 +52,7 @@ public class UserController extends BaseController {
 		if (existUser != null) {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("user", existUser);
-			String token = TokenUtil.createToken(existUser);
+			String token = TokenUtil.createToken(existUser,"123");
 			jsonObject.put("token", token);
 			logger.info("用户登录请求通过"+jsonObject);
 			return CommonResult.ok(jsonObject);
@@ -108,14 +108,13 @@ public class UserController extends BaseController {
 			logger.info("邮箱["+email+"已被使用");
 			return CommonResult.failed("该邮箱已被使用");
 		}
-
+		
 		String code;
 		try {
 			code = mailService.sendVerificationCode(email);
 		} catch (Exception e) {
 			logger.error("发送邮箱验证码失败");
-			logger.error(e.getMessage());
-			return CommonResult.failed("发送邮箱验证码失败");
+			return CommonResult.failed("发送邮箱验证码失败,请校验邮箱合法性");
 		}
 		//验证码放reids，存货时间15分钟
 		RedisUtil.set("emailCode-" + email, code, 900);

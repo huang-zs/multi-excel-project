@@ -17,6 +17,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
@@ -25,7 +26,10 @@ import io.netty.util.internal.logging.Log4J2LoggerFactory;
 @Component
 public class WebSocketServer {
 	private static Logger logger = LoggerFactory.logger(WebSocketServer.class);
-
+	
+	@Value("${webSocket.timeOut}")
+	private long timeOut;
+	
 	@PostConstruct
 	public void init() {
 		logger.debug("websocket 初始化");
@@ -38,6 +42,8 @@ public class WebSocketServer {
 	 */
 	@OnOpen
 	public void onOpen(@PathParam(value = "id") String id, Session session) {
+		//设置超时时间
+		session.setMaxIdleTimeout(timeOut);
 		// 如果这个群已经存在
 		if (groupMap.containsKey(id)) {
 			CopyOnWriteArraySet<Session> copyOnWriteArraySet = groupMap.get(id);
