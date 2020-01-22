@@ -22,19 +22,14 @@ public class LoginIntercepter implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String requestURI = request.getRequestURI();
-		StringBuffer requestURL = request.getRequestURL();
-		logger.debug(requestURI);
-		logger.debug(requestURL.toString());
-		logger.debug(request.getServletPath());
-		logger.debug("拦截器");
+		logger.debug("拦截器拦截到请求:"+request.getServletPath());
 		String token = request.getHeader("SecurtToken");
-		System.out.println("ip:"+InetAddress.getLocalHost().getHostAddress());
+//		System.out.println("ip:"+InetAddress.getLocalHost().getHostAddress());
 		System.out.println("ip:"+request.getLocalAddr());
 		System.out.println(request.getRemoteAddr());
+		response.setContentType("text/html;charset=UTF-8"); 
 		if(StringUtils.isEmpty(token)) {
 			response.setStatus(401);
-			response.setContentType("text/html;charset=UTF-8"); 
 			response.getWriter().append("你没有登录，请去登录");
 			logger.info("请求header缺少SecurtToken");
 			return false;

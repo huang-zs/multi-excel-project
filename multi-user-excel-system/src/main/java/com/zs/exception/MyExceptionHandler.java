@@ -33,6 +33,7 @@ public class MyExceptionHandler {
 		logger.error(new Date() + ":" + "[类:" + exclass + "]调用"
 		+ method + "时在第" + stackTraceElement.getLineNumber()
 		+ "行代码处发生异常!异常类型:" + ex.getClass().getName()+":"+ex.getMessage());
+		logger.error("运行时异常", ex);
 		return CommonResult.wrong(ex.getMessage());
 	}
 	/**
