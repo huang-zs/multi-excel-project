@@ -34,7 +34,9 @@ export default {
       webSocket: null,
       excelId: '',
       rowChangedFlag: true, //收到websocket时置false
-      ColumnChangedFlag: true //收到websocket时置false
+      ColumnChangedFlag: true,//收到websocket时置false
+      ActiveSheetChangedFlag: true,//收到websocket时置false
+      SheetNameChangedFlag: true //收到websocket时置false
     }
   },
   mounted() {
@@ -68,14 +70,15 @@ export default {
       // 值
       _this.spread.bind(GC.Spread.Sheets.Events.ValueChanged, function (s, e) {
         console.log('发送ValueChanged')
-        console.log(JSON.parse(JSON.stringify(e)))
+        console.log(e)
         _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
       })
       // 整行
       _this.spread.bind(GC.Spread.Sheets.Events.RowChanged, function (s, e) {
-        console.log('发送RowChanged')
         // 防止收到websocket后excel监听到变化后又发websocket
         if (_this.rowChangedFlag) {
+          console.log('发送RowChanged')
+          console.log(e)
           _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
         } else {
           _this.rowChangedFlag = true
@@ -83,9 +86,10 @@ export default {
       })
       // 整列
       _this.spread.bind(GC.Spread.Sheets.Events.ColumnChanged, function (s, e) {
-        console.log('发送ColumnChanged')
         // 防止收到websocket后excel监听到变化后又发websocket
         if (_this.ColumnChangedFlag) {
+          console.log('发送ColumnChanged')
+          console.log(e)
           _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
         } else {
           _this.ColumnChangedFlag = true
@@ -96,7 +100,6 @@ export default {
         s,
         e
       ) {
-        console.log('发送ActiveSheetChanged')
         let spread = JSON.parse(JSON.stringify(_this.spread))
         //旧的sheet名数组
         let newSheetsName = Object.keys(spread.sheets)
@@ -110,22 +113,41 @@ export default {
             _this.$set(e, 'type', 'add')
             //获取新增的sheet名
             let result = minusArray(newSheetsName, oldSheetsName)
-            console.log('增加' + result)
             _this.$set(e, 'sheetName', result[0])
-            console.log(e)
+            console.log('增加' + result)
           } else {//删除sheet
             _this.$set(e, 'type', 'delete')
             //获取删除的sheet名
             let result = minusArray(oldSheetsName, newSheetsName)
-            console.log('减少' + result)
             _this.$set(e, 'sheetName', result[0])
-            console.log(e)
+            console.log('减少' + result)
           }
           _this.sheetsName = newSheetsName
-          _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
+          if (true) {
+            // if (_this.ActiveSheetChangedFlag) {
+            console.log('发送ActiveSheetChanged')
+            console.log(e)
+            _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
+          } else {
+            _this.ActiveSheetChangedFlag = true
+          }
         }
 
 
+      })
+      //修改sheet名称
+      _this.spread.bind(GC.Spread.Sheets.Events.SheetNameChanged, function (
+        s,
+        e
+      ) {
+        // 防止收到websocket后excel监听到变化后又发websocket
+        if (_this.SheetNameChangedFlag) {
+          console.log('发送SheetNameChanged')
+          console.log(e)
+          _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
+        } else {
+          _this.SheetNameChangedFlag = true
+        }
       })
       // // 切换单元格
       // _this.spread.bind(GC.Spread.Sheets.Events.SelectionChanged, function (
@@ -141,7 +163,7 @@ export default {
         s,
         e
       ) {
-        console.log('发送ClipboardPasted')
+
         //获取要操作的sheet
         let sheet = _this.spread
           .getSheetFromName(e.sheetName)
@@ -154,14 +176,14 @@ export default {
         for (let row = rowIndex, i = 0; row < rowIndex + rowCount; row++ , i++) {
           dataArray[i] = []
           for (let col = colIndex, j = 0; col < colIndex + colCount; col++ , j++) {
-            console.log(sheet
-              .getCell(row, col).text())
             dataArray[i][j] = sheet
               .getCell(row, col).text()
           }
         }
         //把值数组赋给e
         _this.$set(e, 'dataArray', dataArray)
+        console.log('发送ClipboardPasted')
+        console.log(e)
         _this.webSocket.send(JSON.stringify({ type: s.type, data: e }))
       })
     })
@@ -219,7 +241,7 @@ export default {
       // 连接关闭事件
       this.webSocket.onclose = function () {
         window.console.log('Socket已关闭')
-        _this.webSocketInit();
+        // _this.webSocketInit()
       }
       // 发生了错误事件
       this.webSocket.onerror = function () {
@@ -232,7 +254,8 @@ export default {
         // 转成json对象
         let jsonv = JSON.parse(msg.data)
         let data = jsonv.data
-        console.log(data)
+        console.log(jsonv)
+
         //判断excel进行什么变化
         switch (jsonv.type) {
 
@@ -270,27 +293,35 @@ export default {
 
           case 'ClipboardPasted'://粘贴
             console.log('收到ClipboardPasted')
-            console.log(data)
             _this.spread
               .getSheetFromName(data.sheetName).setArray(data.cellRange.row, data.cellRange.col, data.dataArray)
             break
 
+          case 'SheetNameChanged'://sheet名字改变
+            _this.SheetNameChangedFlag = false
+            console.log('收到SheetNameChanged')
+            //先根据sheetname获取index，在第index个sheet更改名字
+            _this.spread.sheets[_this.spread.getSheetIndex(data.oldValue)].name(data.newValue)
+            break
+
           case 'ActiveSheetChanged'://sheet变化
+            _this.ActiveSheetChangedFlag = false
             console.log('收到ActiveSheetChanged')
-            console.log(jsonv)
             if (data.type === 'add') {//新增sheet
               _this.spread.addSheet(_this.spread.getSheetCount())
             } else {//删除sheet
-              //先根据sheetname获取index，再删除第index的sheet
-              _this.spread.removeSheet(_spread.getSheetIndex(data.sheetName))
+              //先根据sheetname获取index，再删除第index的sheet,可行，sheetname唯一
+              _this.spread.removeSheet(_this.spread.getSheetIndex(data.sheetName))
             }
             break
+
           default:
             console.log('others')
 
             break
         }
-
+        //立即渲染？
+        _this.spread.repaint()
       }
       // 窗口关闭时，关闭连接
       window.unload = function () {
