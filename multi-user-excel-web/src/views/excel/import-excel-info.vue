@@ -13,29 +13,58 @@
   </el-form>
 </template>
 <script>
+import { create } from '@/api/excel'
+import ExcelIO from '@grapecity/spread-excelio'
 export default {
-  name: 'new-excel-info',
+  name: 'import-excel-info',
   data() {
     return {
       importExcelForm: {
         type: 'import', // 代表是importExcel
         name: '', //excel文件名
         fileDescribe: '', //excel文件描述
-        excelFile: null, //上传的文件对象
         json: ''
       }
     }
   },
   methods: {
+    //解析excel文件成json后调后端接口新建excel
     toNewExcel() {
-      const file = document.getElementById('excelFile').files[0]
-      const fileName = file.name
-      this.importExcelForm.name = fileName.substring(fileName.lastIndexOf('.'))
-      this.importExcelForm.excelFile = file
-      this.$router.push({
-        name: 'newExcel',
-        params: this.importExcelForm
-      })
+      let _this = this
+      let file = document.getElementById('excelFile').files[0]
+      let fileName = file.name
+      //赋值文件名
+      _this.importExcelForm.name = fileName.substring(0, fileName.lastIndexOf('.'))
+      console.log('导入excel')
+      let ex = new ExcelIO.IO()
+      //读取excel文件为json
+      ex.open(
+        file,
+        function (json) {
+          //赋值json
+          _this.importExcelForm.json = JSON.stringify(json)
+
+          //调后端接口新建excel对象
+          create(_this.importExcelForm)
+            .then(response => {
+              // 接口返回，保存excel对象到store里面
+              _this.$store.commit('saveExcel', response.data.data)
+              console.log(_this.$store.state.Excel.id)
+              //跳转到excel页面
+              _this.$router.push({
+                path: '/home/newExcel',
+                query: {
+                  excelId: _this.$store.state.Excel.id                }
+              })
+            })
+
+        },
+        function (e) {
+          //读excel报错
+          console.log(e)
+        }
+      )
+
     }
   }
 }

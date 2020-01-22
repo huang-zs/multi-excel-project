@@ -24,7 +24,8 @@ public class TokenUtil {
 	private static final Logger logger = LoggerFactory.getLogger(MailUtil.class);
 	/**
 	 * 用 登录用户生成 token
-	 * 
+	 * @param user 用户
+	 * @param ip 登录ip
 	 * @return
 	 */
 	public static String createToken(User user,String ip) {

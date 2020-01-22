@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '../store'
-// import { Message } from 'element-ui'
+import { MessageBox } from 'element-ui'
+import router from '../router'
 
 const service = axios.create({
   baseURL: process.env.BASE_URL,
@@ -16,14 +17,29 @@ service.interceptors.request.use(
     return config
   }
 )
+//响应拦截器
 service.interceptors.response.use(
-  response => {
-    if (response.data.status && response.data.status === 200 && response.data.data.code !== 200) {
-      console.log('接口' + response.config.url + ']调用失败')
-    }
+  response => {//200的走这里
+    // if (response.data.status && response.data.status === 200 && response.data.data.code !== 200) {
+    //   console.log('接口' + response.config.url + ']调用失败')
+    // }
+    console.log('正常响应')
+    console.log(response)
+
     return response
-  },(error) =>{ 
+  },(error) =>{ //非200的会走这里
+    console.log('响应报错')
     console.log(error.response)
+    if(error.response.status && error.response.status ===401){
+      MessageBox.alert(error.response.data, '用户未登录', {
+        confirmButtonText: '去登录',
+        showClose:false,
+        callback: action => {
+          console.log('去登陆了')
+          router.push({path:'/user/login'})
+        }
+      })
+    }
   }
 )
 

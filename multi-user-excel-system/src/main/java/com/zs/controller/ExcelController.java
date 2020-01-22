@@ -28,6 +28,8 @@ import com.zs.util.RedisUtil;
 public class ExcelController extends BaseController {
 
 	private  final Logger logger = LoggerFactory.getLogger(ExcelController.class);
+	//excel模板
+	private final String excelJsonModel="{\"version\":\"13.0.3\",\"customList\":[],\"sheets\":{\"Sheet1\":{\"name\":\"Sheet1\",\"theme\":\"Office\",\"data\":{\"defaultDataNode\":{\"style\":{\"themeFont\":\"Body\"}}},\"rowHeaderData\":{\"defaultDataNode\":{\"style\":{\"themeFont\":\"Body\"}}},\"colHeaderData\":{\"defaultDataNode\":{\"style\":{\"themeFont\":\"Body\"}}},\"leftCellIndex\":0,\"topCellIndex\":0,\"selections\":{\"0\":{\"row\":0,\"rowCount\":1,\"col\":0,\"colCount\":1},\"length\":1},\"cellStates\":{},\"outlineColumnOptions\":{},\"autoMergeRangeInfos\":[],\"index\":0}}}";
 
 	@Autowired
 	private ExcelService excelService;
@@ -74,6 +76,10 @@ public class ExcelController extends BaseController {
 		String encodeId = Base64.getEncoder().encodeToString(id.getBytes());
 		// 设置excel唯一id
 		json.put("id", encodeId);
+		
+		if(json.getString("type").equals("new")) {//新建的放model，导入的前端会传
+			json.put("json", excelJsonModel);
+		}
 		Excel excel = json.toJavaObject(Excel.class);
 		int i = excelService.create(excel);
 		RedisUtil.set(encodeId, JSONObject.toJSONString(excel));

@@ -21,10 +21,10 @@ const store = new Vuex.Store({
       localStorage.setItem('ExcelUser', JSON.stringify(data.user))
     },
     saveExcel (state, excel) {
-      state.excel = excel
+      state.Excel = excel
     },
     updateExcel (state, json) {
-      state.excel.json = json
+      state.Excel.json = json
     }
   }
 

@@ -48,7 +48,7 @@
       <el-table-column prop="fileDescribe" label="文件描述" width="180"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <router-link :to="{name:'newExcel',params:{id:scope.row.id,type:'open'}}">
+          <router-link :to="{path:'/home/newExcel',query:{excelId:scope.row.id}}">
             <el-button size="mini">打开</el-button>
           </router-link>
           <el-button size="mini" type="danger" @click="deleteExcel(scope.row.id)">删除</el-button>
@@ -136,10 +136,9 @@ export default {
             if (response.data.code === 200) {
               window.console.log('打开' + value)
               this.$router.push({
-                name: 'newExcel',
-                params: {
-                  id: value,
-                  type: 'open'                }
+                path: '/home/newExcel',
+                query: {
+                  excelId: value                }
               })
             } else {
               alert(response.data.msg)

@@ -28,17 +28,25 @@ public class LoginIntercepter implements HandlerInterceptor {
 		logger.debug(requestURL.toString());
 		logger.debug(request.getServletPath());
 		logger.debug("拦截器");
-		String token = request.getHeader("token");
+		String token = request.getHeader("SecurtToken");
 		System.out.println("ip:"+InetAddress.getLocalHost().getHostAddress());
 		System.out.println("ip:"+request.getLocalAddr());
-//		if(StringUtils.isEmpty(token)) {
-//			JSONObject jsonUser = TokenUtil.getJsonObjectByToken(token);
-//			
-//			
-//			response.setStatus(401);
-//			response.getWriter().append("你没有登录，请去登录");
-//			return false;
-//		}
+		System.out.println(request.getRemoteAddr());
+		if(StringUtils.isEmpty(token)) {
+			response.setStatus(401);
+			response.setContentType("text/html;charset=UTF-8"); 
+			response.getWriter().append("你没有登录，请去登录");
+			logger.info("请求header缺少SecurtToken");
+			return false;
+		}else {
+			JSONObject jsonUser = TokenUtil.getJsonObjectByToken(token);
+			if(jsonUser==null) {
+				response.setStatus(401);
+				response.getWriter().append("登录失效，请重新登陆");
+				logger.info("SecurtToken的redis缓存不存在");
+				return false;
+			}
+		}
 	
 		return true;
 	}
