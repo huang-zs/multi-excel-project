@@ -23,13 +23,13 @@ service.interceptors.response.use(
     // if (response.data.status && response.data.status === 200 && response.data.data.code !== 200) {
     //   console.log('接口' + response.config.url + ']调用失败')
     // }
-    console.log('正常响应')
-    console.log(response)
+    // console.log('正常响应')
+    // console.log(response)
 
     return response
   },(error) =>{ //非200的会走这里
     console.log('响应报错')
-    console.log(error.response)
+    // console.log(error.response)
     if(error.response.status && error.response.status ===401){
       MessageBox.alert(error.response.data, '用户未登录', {
         confirmButtonText: '去登录',

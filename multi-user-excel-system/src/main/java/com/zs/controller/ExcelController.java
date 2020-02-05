@@ -82,7 +82,7 @@ public class ExcelController extends BaseController {
 		}
 		Excel excel = json.toJavaObject(Excel.class);
 		int i = excelService.create(excel);
-		RedisUtil.set(encodeId, JSONObject.toJSONString(excel));
+//		RedisUtil.set(encodeId, JSONObject.toJSONString(excel));
 		logger.info("新建excel请求通过,return:"+excel);
 		return CommonResult.ok(excel);
 	}
@@ -104,6 +104,8 @@ public class ExcelController extends BaseController {
 			excel = JSONObject.toJavaObject(JSONObject.parseObject(excelStr), Excel.class);
 		} else {
 			excel = excelService.get(excelId);
+			//放进redis
+			RedisUtil.set(excelId, JSONObject.toJSONString(excel));
 		}
 		logger.info("获取excel请求结束,return:"+excel);
 		return CommonResult.ok(excel);
@@ -126,13 +128,26 @@ public class ExcelController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@PostMapping("/save")
-	public CommonResult save(@RequestBody JSONObject json) {
-		logger.info("收到获取excel请求"+json);
+	@PostMapping("/hardSave")
+	public CommonResult hardSave(@RequestBody JSONObject json) {
+		logger.info("收到保存excel请求"+json);
 		Excel excel = JSONObject.toJavaObject(json, Excel.class);
 		excelService.save(excel);
 		RedisUtil.set(excel.getId(), JSONObject.toJSONString(excel));
-		logger.info("获取excel请求通过");
+		logger.info("保存excel请求通过");
+		return CommonResult.ok();
+	}
+	/**
+	 * 保存excel (redis)
+	 * @param json
+	 * @return
+	 */
+	@PostMapping("/easySave")
+	public CommonResult easySave(@RequestBody JSONObject json) {
+		logger.info("收到简单保存excel请求"+json);
+		Excel excel = JSONObject.toJavaObject(json, Excel.class);
+		RedisUtil.set(excel.getId(), JSONObject.toJSONString(excel));
+		logger.info("简单保存excel请求通过");
 		return CommonResult.ok();
 	}
 
@@ -156,13 +171,6 @@ public class ExcelController extends BaseController {
 		json.put("id", getUser().getId());
 		PageInfo pageInfo = null;
 		String type = json.getString("type");
-//		if (type.equals("mine")) {// 查询本人
-//			pageInfo = excelService.getExcelListByCreaterId(json, json.getIntValue("pageNum"),
-//					json.getIntValue("pageSize"));
-//		} else if(type.eq) {// 查询协助的excel
-//			pageInfo = excelService.getShareExcelListByUserId(json, json.getIntValue("pageNum"),
-//					json.getIntValue("pageSize"));
-//		}
 		switch (type) {
 		case "1"://查自己的
 			pageInfo = excelService.getExcelListByCreaterId(json, json.getIntValue("pageNum"),

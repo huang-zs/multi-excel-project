@@ -31,10 +31,10 @@
     </el-form>
     <!--数据显示table-->
     <el-table :data="excelList" style="width: 100%">
-      <el-table-column prop="name" label="文件名" width="180"></el-table-column>
+      <el-table-column prop="name" label="文件名" width="200"></el-table-column>
       <el-table-column prop="createDate" label="创建日期" width="180"></el-table-column>
       <el-table-column prop="lastModifyDate" label="最后修改日期" width="180"></el-table-column>
-      <el-table-column prop="fileDescribe" label="文件描述" width="180"></el-table-column>
+      <el-table-column prop="excelDescribe" label="文件描述" width="250"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="recoverExcel(scope.row.id)">还原</el-button>
@@ -56,7 +56,7 @@
 <script>
 import { list, recover } from '@/api/excel'
 export default {
-  data () {
+  data() {
     return {
       excelList: [],
       deletedExcelListForm: {
@@ -69,12 +69,12 @@ export default {
       total: 0
     }
   },
-  mounted () {
+  mounted() {
     this.searchExcelList()
   },
   methods: {
     // 恢复excel
-    recoverExcel (excelId) {
+    recoverExcel(excelId) {
       recover({ 'excelId': excelId }).then(response => {
         alert(response.data.msg)
         this.searchExcelList(1)
@@ -82,20 +82,20 @@ export default {
       console.log(excelId)
     },
     // 页显示个数变化
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(this.deletedExcelListForm)
       this.deletedExcelListForm.pageSize = val
       // 改变页显示个数时默认搜索第一页
       this.searchExcelList(1)
     },
     // 当前页变化
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(this.deletedExcelListForm)
       this.deletedExcelListForm.pageNum = val
       this.searchExcelList()
     },
 
-    searchExcelList (e) {
+    searchExcelList(e) {
       if (e) {
         this.deletedExcelListForm.pageNum = 1
       }

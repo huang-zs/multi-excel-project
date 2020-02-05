@@ -29,3 +29,11 @@ Vue.directive('preventReClick', {
     })
   }
 })
+//返回上一页自定义指令
+Vue.directive('goBack', {
+  inserted (el) {
+    el.addEventListener('click', () => {
+      router.back()
+    })
+  }
+})

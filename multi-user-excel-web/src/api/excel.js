@@ -33,11 +33,22 @@ export function get (data) {
   })
 }
 /**
- * spread对象保存
+ * spread对象保存 redis
  */
-export function save (data) {
+export function easySave (data) {
   return request({
-    url: '/excel/save',
+    url: '/excel/easySave',
+    method: 'post',
+    data: data
+
+  })
+}
+/**
+ * spread对象保存 redis+database
+ */
+export function hardSave (data) {
+  return request({
+    url: '/excel/hardSave',
     method: 'post',
     data: data
 

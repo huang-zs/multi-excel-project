@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zs.mapper.UserMapper" >
-<select id="login" parameterType="User" resultType="User">
-	select id,name,email,status from user where email=#{user.email} and password=#{user.password}
-</select>
-<insert id="create" parameterType="User">
-	insert into user(name,email,password,status) VALUES(#{user.name},#{user.email},#{user.password},'0')
-</insert>
-<select id="existEmail" parameterType="String" resultType="int">
-select count(1) from user where email=#{email}
-</select>
-<select id="userList" resultType="User">
-	select * from user 
-</select>
-
+<mapper namespace="com.zs.mapper.UserMapper">
+	<select id="login" parameterType="User" resultType="User">
+		select
+		id,name,email,status from user where email=#{user.email} and
+		password=#{user.password}
+	</select>
+	<insert id="create" parameterType="User">
+		insert into
+		user(name,email,password,status)
+		VALUES(#{user.name},#{user.email},#{user.password},'0')
+	</insert>
+	<select id="existEmail" parameterType="String" resultType="int">
+		select count(1) from user where email=#{email}
+	</select>
+	<select id="userList" resultType="User">
+		select * from user
+	</select>
+	<update id="resetPassword">
+		update user set password=#{newPassword} where
+		email=#{email}
+	</update>
+	<update id="update" parameterType="User">
+		update user
+		<trim prefix="set" suffixOverrides=",">
+			<if test="user.name!=null and user.name!=''">
+				name=#{user.name},
+			</if>
+			<if test="user.password!=null and user.password!=''">
+				name=#{user.password},
+			</if>
+			<if test="user.email!=null and user.email!=''">
+				name=#{user.email},
+			</if>
+		</trim>
+		where id=#{user.id}
+	</update>
+	<select id="getById" parameterType="String" resultType="User">
+		select
+		id,name,email,status from user where id=#{id}
+	</select>
 </mapper>

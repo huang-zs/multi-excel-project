@@ -4,8 +4,8 @@
 
 	<insert id="create" parameterType="Excel">
 		INSERT INTO excel
-		(id,name,create_date,last_modify_date,json,creater_id,status,file_describe)
-		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1',#{excel.fileDescribe})
+		(id,name,create_date,last_modify_date,json,creater_id,status,excel_describe)
+		values(#{excel.id},#{excel.name},#{excel.createDate},#{excel.lastModifyDate},#{excel.json},#{excel.createrId},'1',#{excel.excelDescribe})
 	</insert>
 	<select id="get" resultType="Excel" parameterType="String">
 		select * from
@@ -26,11 +26,12 @@
 		</if>
 		order by last_modify_date desc
 	</select>
+	<!-- 查自己关联的，不要作者是自己的 -->
 	<select id="getShareExcelListByUserId" parameterType="String"
 		resultType="Excel">
 		select distinct * from user_excel a LEFT JOIN excel b on
 		a.excel_id=b.id
-		where a.user_id=#{id}
+		where a.user_id=#{id} and b.creater_id != #{id}
 		<if test="name !=null and name !='' ">
 			and b.name like "%"#{name}"%"
 		</if>
@@ -48,9 +49,6 @@
 		insert into user_excel
 		values(#{userId},#{excelId})
 	</insert>
-	<!-- <delete id="deleteExcelByExcelId" parameterType="String">
-		delete from excel where id = #{excelId}
-	</delete> -->
 	<update id="updateExcelStatusByExcelId">
 		update excel set status =#{status} where id = #{excelId}
 	</update>

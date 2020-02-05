@@ -2,27 +2,27 @@
   <el-container>
     <el-aside width="200px">
       <el-menu default-active>
-        <el-submenu index title="我的功能">
+        <el-submenu index>
           <template slot="title">
-            <i class="el-icon-message"></i>我的功能
+            <i class="el-icon-tickets">我的功能</i>
           </template>
-          <el-menu-item index>
-            <router-link to="/home/openExcelList">打开Excel</router-link>
-          </el-menu-item>
-          <el-menu-item index>
-            <router-link to="/home/newExcelInfo">新建Excel</router-link>
-          </el-menu-item>
-          <el-menu-item index>
-            <router-link to="/home/importExcelInfo">导入Excel</router-link>
-          </el-menu-item>
+          <router-link to="/home/openExcelList">
+            <el-menu-item index>打开Excel</el-menu-item>
+          </router-link>
+          <router-link to="/home/newExcelInfo">
+            <el-menu-item index>新建Excel</el-menu-item>
+          </router-link>
+          <router-link to="/home/importExcelInfo">
+            <el-menu-item index>导入Excel</el-menu-item>
+          </router-link>
         </el-submenu>
-        <el-submenu index title="回收站">
+        <el-submenu index>
           <template slot="title">
-            <i class="el-icon-message"></i>回收站
+            <i class="el-icon-delete">回收站</i>
           </template>
-          <el-menu-item index>
-            <router-link to="/home/deletedExcelList">恢复Excel</router-link>
-          </el-menu-item>
+          <router-link to="/home/deletedExcelList">
+            <el-menu-item index>恢复Excel</el-menu-item>
+          </router-link>
         </el-submenu>
       </el-menu>
     </el-aside>

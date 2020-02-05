@@ -32,7 +32,15 @@
       <el-form-item>
         <el-row>
           <el-col :span="18">
-            <el-button @click="searchExcelList(1)">查询</el-button>
+            <el-button plain type="info" @click="searchExcelList(1)">查询</el-button>
+            <el-button plain type="primary" @click="openExcel()" :disabled="controlFlag">打开</el-button>
+            <el-button
+              plain
+              type="warning"
+              @click="openUpdateExcelInfoDialog()"
+              :disabled="controlFlag"
+            >修改</el-button>
+            <el-button plain type="danger" @click="deleteExcel()" :disabled="controlFlag">删除</el-button>
           </el-col>
           <el-col :span="6" style="text-align:center;">
             <el-button @click="openExcelByCode">邀请码打开</el-button>
@@ -41,20 +49,32 @@
       </el-form-item>
     </el-form>
     <!--数据显示table-->
-    <el-table :data="excelList" style="width: 100%">
-      <el-table-column prop="name" label="文件名" width="180"></el-table-column>
+    <el-table
+      :data="excelList"
+      style="width: 100%"
+      highlight-current-row
+      @current-change="rowChange"
+    >
+      <el-table-column prop="name" label="文件名" width="200"></el-table-column>
       <el-table-column prop="createDate" label="创建日期" width="180"></el-table-column>
       <el-table-column prop="lastModifyDate" label="最后修改日期" width="180"></el-table-column>
-      <el-table-column prop="fileDescribe" label="文件描述" width="180"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="excelDescribe" label="文件描述"></el-table-column>
+      <!-- <el-table-column label="操作">
         <template slot-scope="scope">
-          <router-link :to="{path:'/home/newExcel',query:{excelId:scope.row.id}}">
+          <router-link :to="{path:'/excel',query:{excelId:scope.row.id}}">
             <el-button size="mini">打开</el-button>
           </router-link>
+          <el-button size="mini" type="warning" @click="openUpdateExcelInfoDialog(scope.row)">修改</el-button>
           <el-button size="mini" type="danger" @click="deleteExcel(scope.row.id)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
+    <!-- 打开修改excel的dialog -->
+    <update-excel-dialog
+      :excel="excelInfo"
+      :dialogVisible="updateExcelDialogFlag"
+      @dialogVisibleClose="updateExcelDialogFlag=$event"
+    ></update-excel-dialog>
     <!-- 分页 -->
     <el-pagination
       @size-change="handleSizeChange"
@@ -69,9 +89,17 @@
 </template>
 <script>
 import { list, checkAndBindExcel, remove } from '@/api/excel'
+import updateExcelDialog from '@/components/dialogs/update-excel-dialog'
 export default {
+  components: {
+    updateExcelDialog
+  },
   data() {
     return {
+      //excel是否被选中
+      controlFlag: true,
+      //修改excel的dialog是否可见
+      updateExcelDialogFlag: false,
       excelList: [],
       copyUrl: 'copyUrl',
       openExcelListForm: {
@@ -81,20 +109,56 @@ export default {
         pageSize: 5,
         pageNum: 1
       },
+      excelInfo: {},
       total: 0
+    }
+  },
+  watch: {
+    excelInfo: {
+      handler(newVal, oldVal) {
+        //有选中,就可以对excel操作
+        this.controlFlag = Object.keys(newVal).length == 0 ? true : false
+      },
+      deep: true
     }
   },
   mounted() {
     this.searchExcelList()
   },
   methods: {
-    // 删除excel
-    deleteExcel(excelId) {
-      remove({ 'excelId': excelId }).then(response => {
-        alert(response.data.msg)
-        this.searchExcelList(1)
+    openExcel() {
+      console.log('打开excel')
+      console.log(this.excelInfo)
+      this.$router.push({
+        path: '/excel',
+        query: { excelId: this.excelInfo.id }
       })
-      console.log(excelId)
+    },
+    //选中的行发生变化
+    rowChange(val) {
+      //当前选中excel赋值
+      this.excelInfo = val ? val : {}
+    },
+    //打开修改excel信息的dialog
+    openUpdateExcelInfoDialog() {
+      this.updateExcelDialogFlag = true
+    },
+    // 删除excel
+    deleteExcel() {
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        remove({ 'excelId': this.excelInfo.id }).then(response => {
+          this.searchExcelList(1)
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        })
+
+      })
     },
     // 页显示个数变化
     handleSizeChange(val) {
@@ -136,9 +200,10 @@ export default {
             if (response.data.code === 200) {
               window.console.log('打开' + value)
               this.$router.push({
-                path: '/home/newExcel',
+                path: '/excel',
                 query: {
-                  excelId: value                }
+                  excelId: value
+                }
               })
             } else {
               alert(response.data.msg)
@@ -149,12 +214,12 @@ export default {
               path: '/error'
             })
           })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
+      }).catch(error => {
+        console.log('取消输入')
+
       })
+
+
     }
   }
 }

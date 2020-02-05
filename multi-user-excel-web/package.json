@@ -5,10 +5,11 @@
   "description": "A Vue.js project",
   "author": "zs",
   "scripts": {
+    "war": "cd dist && jar -cvf multi-user-excel-web.war *",
     "build": "node build/build.js",
+    "build-dev": "node build/buildDev.js",
     "lint": "eslint --ext .js,.vue src",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "prod": "webpack-dev-server --inline --progress --config build/webpack.prod.conf.js",
     "start": "npm run dev"
   },
   "dependencies": {

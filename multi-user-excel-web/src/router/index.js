@@ -18,18 +18,18 @@ const router = new Router({
       component: () => import('@/views/user/create')
     },
     {
+      path: '/user/resetPassword',
+      component: () => import('@/views/user/reset-password')
+    },
+    {
+      path: '/home/updateInfo',
+      component: () => import('@/views/user/update-info.vue')
+    },
+    {
       path: '/home',
       component: () => import('@/views/home'),
       children: [
-        {
-          path: 'newExcel',
-          name: 'newExcel',
-          component: () => import('@/views/excel/new-excel.vue')
-        },
-        {
-          path: 'openExcel',
-          component: () => import('@/views/excel/open-excel.vue')
-        },
+        
         {
           path: 'openExcelList',
           component: () => import('@/views/excel/open-excel-list.vue')
@@ -47,6 +47,9 @@ const router = new Router({
           component: () => import('@/views/excel/new-excel-info.vue')
         }
       ]
+    },{
+      path: '/excel',
+      component: () => import('@/views/excel/excel.vue')
     },
     {
       path: '/success',
@@ -56,27 +59,30 @@ const router = new Router({
       path: '/error',
       component: () => import('@/views/common/error')
     },
-    // {
-    //   path: '/test',
-    //   component: () => import('@/views/test/test2')
-    // }
+    {
+      path: '/test1',
+      component: () => import('@/views/test/test1')
+    },
+    {
+      path: '/test2',
+      component: () => import('@/views/test/test2')
+    }
   ]
 })
 // localstore里面没token就跳登录页面
 router.beforeEach((to, from, next) => {
-  window.console.log(to.path)
-  if (to.path.startsWith('/user/') || to.path === '/') {
-    window.console.log('请求路径' + to.path)
+  // window.console.log(to.path)
+  if (to.path.startsWith('/user/') || to.path === '/'||to.path.startsWith('/test') ) {
+    // window.console.log('请求路径' + to.path)
     next()
   } else {
     // 为什么不去store拿？
-    // let token = localStorage.getItem('SecurtToken')
-    // if (token === null || token === '') {
-    //   next('/user/login')
-    // } else {
-    //   next()
-    // }
-    next()
+    let token = localStorage.getItem('SecurtToken')
+    if (token === null || token === '') {
+      next('/user/login')
+    } else {
+      next()
+    }
   }
 })
 export default router

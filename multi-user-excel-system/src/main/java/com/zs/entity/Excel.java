@@ -14,22 +14,25 @@ public class Excel {
 	private String json;
 	private String createrId;
 	private char status;
-	private String fileDescribe;
+	private String excelDescribe;
 	
 	
 	
 	@Override
 	public String toString() {
 		return "Excel [id=" + id + ", name=" + name + ", createDate=" + createDate + ", lastModifyDate="
-				+ lastModifyDate + ", json=" + json + ", createrId=" + createrId + ", status=" + status + ", describe="
-				+ fileDescribe + "]";
+				+ lastModifyDate + ", json=" + json + ", createrId=" + createrId + ", status=" + status + ", excelDescribe="
+				+ excelDescribe + "]";
 	}
-	public String getDescribe() {
-		return fileDescribe;
+	
+	public String getExcelDescribe() {
+		return excelDescribe;
 	}
-	public void setDescribe(String describe) {
-		this.fileDescribe = describe;
+
+	public void setExcelDescribe(String excelDescribe) {
+		this.excelDescribe = excelDescribe;
 	}
+
 	public String getId() {
 		return id;
 	}

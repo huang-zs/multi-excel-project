@@ -5,7 +5,7 @@
         <my-header></my-header>
       </el-header>
       <el-main>
-        <router-view/>
+        <router-view />
       </el-main>
       <el-footer>
         <my-footer></my-footer>
@@ -24,6 +24,9 @@ export default {
   name: 'app',
   components: {
     myHeader, myFooter
-  }
+  },
+  // beforeDestroy() {
+  //   this.$store.commit('deleteUserInfo')
+  // },
 }
 </script>

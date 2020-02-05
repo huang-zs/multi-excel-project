@@ -2,31 +2,41 @@
   <div id="loginDiv">
     <el-card id="loginElCard">
       <div slot="header" class="clearfix">
-        <router-link to="/">
-        <el-button type round plain icon="el-icon-back"></el-button>
-        </router-link>
-        <img src="../../assets/login.png" width="300px" />
+        <el-button type round plain icon="el-icon-back" v-goBack></el-button>
+        <img src="static/images/login.png" width="300px" />
       </div>
       <el-form :model="loginForm" ref="loginForm" @submit.native.prevent>
         <el-form-item label="登录邮箱">
-          <el-input v-model="loginForm.email" placeholder="请输入登录邮箱" />
+          <!-- <el-input v-model="loginForm.email" placeholder="请输入登录邮箱" /> -->
+          <email-input v-model="loginForm.email"></email-input>
         </el-form-item>
         <el-form-item label="登录密码">
-          <el-input v-model="loginForm.password" placeholder="请输入登录密码" />
+          <!-- <el-input v-model="loginForm.password" placeholder="请输入登录密码" /> -->
+          <password-input v-model="loginForm.password"></password-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onLogin">登录</el-button>
+          <el-button type="primary" @click="onLogin" v-preventReClick="2000">登录</el-button>
           <el-button @click="toCreate" v-preventReClick="2000">注册</el-button>
-          <el-button type="text" @click="forgetPwd">忘记密码</el-button>
+          <router-link to="/user/resetPassword">
+            <el-button type="text">忘记密码</el-button>
+          </router-link>
         </el-form-item>
       </el-form>
     </el-card>
   </div>
 </template>
 <script>
+
+import emailInput from '@/components/inputs/email-input'
+import passwordInput from '@/components/inputs/password-input'
 import { login } from '@/api/user'
 export default {
-  data () {
+  components: {
+
+    emailInput,
+    passwordInput
+  },
+  data() {
     return {
       loginForm: {
         email: '',
@@ -35,16 +45,16 @@ export default {
     }
   },
   methods: {
-    toCreate () {
+    toCreate() {
       window.console.log('去注册')
       this.$router.push({
         path: '/user/create'
       })
     },
-    forgetPwd () {
+    forgetPwd() {
       alert('不，你没忘')
     },
-    onLogin () {
+    onLogin() {
       this.$refs.loginForm.validate(vaild => {
         if (vaild) {
           // this.$store
