@@ -31,13 +31,17 @@
     {{myTest}}
     <button @click="saveTest">saveTest</button>
     <button @click="deleteTest">deleteTest</button>
+    <button @click="loadFile">loadFile</button>
+    <el-button @click="encrypt">encrypt</el-button>
+    <el-button @click="getTime">getTime</el-button>
   </div>
 </template>
 <script>
-import { emailVaildCheckm, guid } from '@/api/utils'
+import { emailVaildCheckm, guid, encrypt, getDateString } from '@/api/utils'
 import getEmailCodeButton from '@/components/utils/get-email-code-button'
 import emailInput from '@/components/inputs/email-input'
 import updateExcelDialog from '@/components/dialogs/update-excel-dialog'
+import CryptoJS from 'crypto-js'
 // 测试watch和computed
 export default {
   name: 'test',
@@ -78,6 +82,28 @@ export default {
     clearInterval(this.timer)
   },
   methods: {
+    getTime() {
+      let dateStr = getDateString()
+      console.log(dateStr + dateStr.split('').reverse().join(''))
+    },
+    encrypt() {
+      // let iv = CryptoJS.enc.Utf8.parse('1234567890123456')
+      // let key = CryptoJS.enc.Utf8.parse('1234567890654321')
+      // let srcs = CryptoJS.enc.Utf8.parse('zshuang')
+      // console.log(iv)
+      // console.log(key)
+      // console.log(srcs)
+
+      // var encrypted = CryptoJS.AES.encrypt(srcs, key, {
+      //   iv: iv,
+      //   mode: CryptoJS.mode.CBC,
+      //   padding: CryptoJS.pad.ZeroPadding
+      // })
+
+      // console.log(CryptoJS.enc.Base64.stringify(encrypted.ciphertext))
+      console.log(encrypt('zshuang'))
+
+    },
     saveTest() {
       this.$store.commit('saveTest', { a: '11' })
       console.log(JSON.parse(null))
@@ -122,6 +148,35 @@ export default {
       console.log(this.myArray)
       this.myArray.splice(this.myArray.indexOf('31'), 1)
       console.log(this.myArray)
+
+    },
+    loadFile() {
+      // let filePath = process.env.KEY_FILE
+      let filePath = 'F:\\Code\\secretKey'
+      console.log(filePath)
+
+      var xhr = null
+      if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest()
+      } else {
+        // eslint-disable-next-line
+        xhr = new ActiveXObject('Scripting.FileSystemObject')
+
+      }
+      console.log(xhr)
+      xhr.open('GET', filePath, false)
+      xhr.overrideMimeType('text/html;charset=utf-8')
+      xhr.send(null)
+      console.log(xhr)
+
+      // var fso, f1, ts, s
+      // fso = new ActiveXObject('Scripting.FileSystemObject')
+      // ts = fso.OpenTextFile(filePath, 1)
+      // s = ts.ReadLine()
+      // console.log(s)
+
+      // var f1 = xhr.GetFile(key)
+      // console.log(f1)
 
     }
   },

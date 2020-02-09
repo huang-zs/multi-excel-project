@@ -1,5 +1,5 @@
 <template>
-  <div id="loginDiv">
+  <div class="mainFrame">
     <el-card id="loginElCard">
       <div slot="header" class="clearfix">
         <el-button type round plain icon="el-icon-back" v-goBack></el-button>

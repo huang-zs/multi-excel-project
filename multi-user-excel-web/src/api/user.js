@@ -1,10 +1,14 @@
 import request from '@/utils/request'
+import {encrypt} from '@/api/utils'
 // 用户登录
 export function login (loginForm) {
-return request({
+  let data={}
+  Object.assign(data,loginForm)
+  data.password=encrypt(data.password)
+  return request({
   url: '/user/login',
     method: 'post',
-    data: loginForm
+    data: data
 
   })
 }
@@ -18,10 +22,13 @@ return request({
 
 // 新建用户
 export function create (createForm) {
+  let data={}
+  Object.assign(data,createForm)
+  data.password=encrypt(data.password)
   return request({
     url: '/user/create',
     method: 'post',
-    data: createForm
+    data: data
 
   })
 }
@@ -44,7 +51,11 @@ export function resetPassword (data) {
   })
 }
 //修改信息
-export function update (data) {
+export function update (updateForm) {
+  let data={}
+  Object.assign(data,updateForm)
+  if(data.password)
+  data.password=encrypt(data.password)
   return request({
     url: '/user/update',
     method: 'post',

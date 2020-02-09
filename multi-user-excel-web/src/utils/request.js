@@ -31,6 +31,7 @@ service.interceptors.response.use(
     console.log('响应报错')
     // console.log(error.response)
     if(error.response.status && error.response.status ===401){
+      store.commit('deleteUserInfo')
       MessageBox.alert(error.response.data, '用户未登录', {
         confirmButtonText: '去登录',
         showClose:false,

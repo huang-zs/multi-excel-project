@@ -34,6 +34,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zs.api.CommonResult;
 import com.zs.entity.User;
 import com.zs.service.UserService;
+import com.zs.util.AesUtil;
 import com.zs.util.RedisUtil;
 import com.zs.util.TokenUtil;
 
@@ -50,7 +51,7 @@ public class UserController extends BaseController {
 	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@Autowired
 	private UserService userService;
-	@Value("${tempFileDir}")
+	@Value("${zs.tempFileDir}")
 	private String tempFileDir;
 
 //	@Autowired
@@ -66,6 +67,13 @@ public class UserController extends BaseController {
 	public CommonResult login(@RequestBody JSONObject json) {
 		logger.info("收到用户登录请求" + json);
 		User user = json.toJavaObject(User.class);
+		//解密密码
+		try {
+			user.setPassword(AesUtil.decrypt(user.getPassword()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		User existUser = userService.login(user);
 		if (existUser != null) {
 			JSONObject jsonObject = new JSONObject();
@@ -108,6 +116,13 @@ public class UserController extends BaseController {
 			return CommonResult.failed("邮箱验证码不正确");
 		}
 		User user = json.toJavaObject(User.class);
+		//解密密码
+		try {
+			user.setPassword(AesUtil.decrypt(user.getPassword()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		int i = userService.create(user);
 		RedisUtil.del("emailCode-" + email);
 		logger.info("用户注册请求通过");
@@ -245,6 +260,16 @@ public class UserController extends BaseController {
 			RedisUtil.del("emailCode-" + email);
 		}
 		User user = json.toJavaObject(User.class);
+		//解密密码
+		if(json.containsKey("password")) 
+		{
+			try {
+				user.setPassword(AesUtil.decrypt(user.getPassword()));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		int i = userService.update(user);
 		logger.info("修改用户信息请求通过");
 		return CommonResult.ok();

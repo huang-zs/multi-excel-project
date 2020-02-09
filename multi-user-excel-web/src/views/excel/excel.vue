@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mainFrame">
     <el-container>
       <el-header height="40px">
         <span>
@@ -266,15 +266,7 @@ export default {
       //先把当前最新的json保存到store
       this.$store.commit('updateExcel', JSON.stringify(this.spread.toJSON()))
       easySave(this.$store.state.Excel)
-        .then(response => {
-          window.console.log(response)
-        })
-        .catch(error => {
-          window.console.log(error)
-          this.$router.push({
-            path: '/error'
-          })
-        })
+
     },
     // 保存excel 把id 的excel对象修改
     hardSaveExcel() {
@@ -446,7 +438,7 @@ export default {
   /* padding: 10px;
   box-shadow: 0 0 20px red; */
   width: 100%;
-  height: 400px;
+  height: 100%;
 }
 .spreadHost {
   width: 100%;

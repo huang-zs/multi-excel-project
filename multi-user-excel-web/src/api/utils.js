@@ -1,3 +1,5 @@
+
+import CryptoJS from 'crypto-js'
 //求Array1中Array2没有的元素集合
 export function minusArray (Array1,Array2) {
     return  Array1.filter(function (v) {
@@ -47,4 +49,31 @@ export function minusArray (Array1,Array2) {
   //生成随机颜色
   export function getColor() {
     return '#' + Math.floor(Math.random() * 0xffffff).toString(16)
+  }
+  //偏移量
+  const iv =CryptoJS.enc.Utf8.parse(process.env.AES_IV)
+  
+  //加密
+  export function encrypt(data){
+    console.log('加密前:'+data)
+    let dateStr = getDateString()
+   //密钥
+   let realKey=dateStr + dateStr.split('').reverse().join('')
+   
+   var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), CryptoJS.enc.Utf8.parse(realKey), {
+     iv: iv,
+     mode: CryptoJS.mode.CBC,
+     padding: CryptoJS.pad.ZeroPadding
+   })
+
+   console.log('加密后:'+CryptoJS.enc.Base64.stringify(encrypted.ciphertext))
+   return CryptoJS.enc.Base64.stringify(encrypted.ciphertext)
+  }
+
+  export function getDateString() {
+    let date = new Date()
+    let year=date.getFullYear()
+    let month=date.getMonth()+1>9?date.getMonth()+1:'0'+(date.getMonth()+1)
+    let day=date.getDate()>9?date.getDate():'0'+date.getDate()
+    return year+month+day
   }

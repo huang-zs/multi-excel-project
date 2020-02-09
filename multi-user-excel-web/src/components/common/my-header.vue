@@ -1,67 +1,78 @@
 <template>
-  <div>
-    <div style="float:left;">
-      <img src="static/images/title.png" height="60px" />
-    </div>
-    <!--用户登录才显示-->
-    <div style="float:right;" v-if="userLoginFlag">
-      <el-button
-        type="text"
-        icon="el-icon-share"
-        v-clipboard:copy="url"
-        v-clipboard:success="onCopy"
-        v-clipboard:error="onError"
-      >好东西我要分享</el-button>
-      <el-button
-        type="text"
-        icon="el-icon-message"
-        @click="talkToAuthorDialogVisibleFlag=true"
-      >有话要和作者说</el-button>
-      <talk-to-author-dialog
-        :dialogVisible="talkToAuthorDialogVisibleFlag"
-        @dialogVisibleClose="talkToAuthorDialogVisibleFlag=$event"
-      ></talk-to-author-dialog>
-      <el-button v-popover:popover icon="el-icon-menu" type="text">我的信息</el-button>
-      <el-popover
-        ref="popover"
-        placement="bottom"
-        width="200"
-        trigger="click"
-        :value="popoverVisibleFlag"
-      >
-        <!--用户登录显示用户信息-->
-        <div v-if="userLoginFlag">
-          <span>登录名:</span>
-          <el-row>
-            <el-input disabled :value="user.name" />
-          </el-row>
-          <span>登录邮箱:</span>
-          <el-row>
-            <el-input disabled :value="user.email" />
-          </el-row>
-          <el-row>
-            <router-link to="/home/updateInfo">
-              <el-button type="mini">修改个人信息</el-button>
-            </router-link>
-            <el-button type="mini" @click="userLogout()">退出账号</el-button>
-          </el-row>
-        </div>
-        <!-- 用户未登录显示去登录 -->
-        <div v-else>
-          <router-link to="/user/login">
-            <el-button>去登录</el-button>
+  <div id="appHeader">
+    <el-row>
+      <el-col :span="15">
+        <img src="static/images/title.png" height="60px" />
+      </el-col>
+
+      <!--用户登录才显示-->
+      <div v-if="userLoginFlag">
+        <el-col :span="9">
+          <el-button
+            type="text"
+            icon="el-icon-share"
+            v-clipboard:copy="url"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError"
+          >好东西我要分享</el-button>
+          <el-button
+            type="text"
+            icon="el-icon-message"
+            @click="talkToAuthorDialogVisibleFlag=true"
+          >有话要和作者说</el-button>
+          <talk-to-author-dialog
+            :dialogVisible="talkToAuthorDialogVisibleFlag"
+            @dialogVisibleClose="talkToAuthorDialogVisibleFlag=$event"
+          ></talk-to-author-dialog>
+          <router-link to="/home">
+            <el-button type="text" icon="el-icon-news">回去主页</el-button>
           </router-link>
-        </div>
-      </el-popover>
-    </div>
-    <div style="float:right;" v-else>
-      <router-link to="/user/login">
-        <el-button type="mini">登录</el-button>
-      </router-link>
-      <router-link to="/user/create">
-        <el-button type="mini">注册</el-button>
-      </router-link>
-    </div>
+          <el-button v-popover:popover icon="el-icon-menu" type="text">我的信息</el-button>
+          <el-popover
+            ref="popover"
+            placement="bottom"
+            width="200"
+            trigger="click"
+            :value="popoverVisibleFlag"
+          >
+            <!--用户登录显示用户信息-->
+            <div v-if="userLoginFlag">
+              <span>登录名:</span>
+              <el-row>
+                <el-input disabled :value="user.name" />
+              </el-row>
+              <span>登录邮箱:</span>
+              <el-row>
+                <el-input disabled :value="user.email" />
+              </el-row>
+              <el-row>
+                <router-link to="/home/updateInfo">
+                  <el-button type="mini">修改个人信息</el-button>
+                </router-link>
+                <el-button type="mini" @click="userLogout()">退出账号</el-button>
+              </el-row>
+            </div>
+            <!-- 用户未登录显示去登录 -->
+            <div v-else>
+              <router-link to="/user/login">
+                <el-button>去登录</el-button>
+              </router-link>
+            </div>
+          </el-popover>
+        </el-col>
+      </div>
+
+      <div v-else>
+        <el-col :span="3" :push="6">
+          <router-link to="/user/login">
+            <el-button type="mini">登录</el-button>
+          </router-link>
+          <router-link to="/user/create">
+            <el-button type="mini">注册</el-button>
+          </router-link>
+        </el-col>
+      </div>
+    </el-row>
   </div>
 </template>
 <script>
@@ -112,3 +123,13 @@ export default {
   }
 }
 </script>
+<style scoped>
+#appHeader {
+  color: #999;
+  background-color: white;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  z-index: 999;
+}
+</style>

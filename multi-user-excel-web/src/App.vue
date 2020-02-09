@@ -30,3 +30,14 @@ export default {
   // },
 }
 </script>
+<style >
+html,
+body,
+#app {
+  height: 100%;
+}
+.mainFrame {
+  width: 100%;
+  height: 100%;
+}
+</style>

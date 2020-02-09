@@ -1,10 +1,9 @@
 <template>
-  <div id="loginDiv">
+  <div class="mainFrame">
     <el-card id="loginElCard">
       <div slot="header" class="clearfix">
-        <!-- <router-link to="/user/login"> -->
         <el-button type round plain icon="el-icon-back" v-goBack></el-button>
-        <!-- </router-link> -->
+
         <img src="static/images/create.png" width="300px" />
       </div>
       <el-form :model="createForm" ref="createForm" @submit.native.prevent>

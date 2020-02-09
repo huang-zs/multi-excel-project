@@ -29,8 +29,8 @@ public final class RedisUtil {
 
 	@PostConstruct
 	public void init() {
-		logger.info("redis初始化");
 		template = autowiredTemplate;
+		logger.info("redis初始化:"+autowiredTemplate+"=>"+template);
 	}
 
 	/**
